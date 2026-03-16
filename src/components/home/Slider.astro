@@ -1,0 +1,103 @@
+---
+import HeroSlide from "./HeroSlide.astro";
+
+const slides = [
+    {
+        image: "/hero1.webp",
+        title: "Alimento premium para perros que viven al",
+        description: "100",
+        buttonLabel: "Conocenos",
+        buttonHref: "/another",
+    },
+    {
+        image: "/hero2.webp",
+        buttonLabel: "Donde Comprar",
+        buttonHref: "/",
+    },
+];
+---
+
+<section class="relative h-[100vh] overflow-hidden" id="hero-slider">
+    <div class="relative h-full w-full">
+        {
+            slides.map((slide, index) => (
+                <div
+                    class={`slider-slide absolute inset-0 transition-opacity duration-700 ease-in-out ${
+                        index === 0 ? "opacity-100" : "opacity-0"
+                    }`}
+                    data-index={index}
+                >
+                    <HeroSlide
+                        image={slide.image}
+                        title={slide.title}
+                        description={slide.description}
+                        buttonLabel={slide.buttonLabel}
+                        buttonHref={slide.buttonHref}
+                    />
+                </div>
+            ))
+        }
+
+        <div
+            class="absolute inset-x-0 bottom-8 flex items-center justify-center gap-3"
+            aria-label="Controles del slider"
+        >
+            {
+                slides.map((_, index) => (
+                    <button
+                        type="button"
+                        class="slider-dot h-4 w-4 rounded-full border border-white/70 bg-white/80 hover:bg-white transition cursor-pointer"
+                        aria-label={`Ir al slide ${index + 1}`}
+                        data-index={index}
+                    />
+                ))
+            }
+        </div>
+    </div>
+</section>
+
+<script>
+    if (typeof window !== "undefined") {
+        const root = document.getElementById("hero-slider");
+        if (root) {
+            const slides = Array.from(
+                root.querySelectorAll(
+                    ".slider-slide",
+                ) as NodeListOf<HTMLElement>,
+            );
+            const dots = Array.from(
+                root.querySelectorAll(".slider-dot") as NodeListOf<HTMLElement>,
+            );
+
+            let current = 0;
+            const total = slides.length;
+            const intervalMs = 10000;
+
+            const setActive = (index: number) => {
+                current = index;
+                slides.forEach((slide, i) => {
+                    const isActive = i === current;
+                    slide.style.opacity = isActive ? "1" : "0";
+                    slide.style.pointerEvents = isActive ? "auto" : "none";
+                });
+                dots.forEach((dot, i) => {
+                    dot.style.backgroundColor =
+                        i === current ? "#FBDF00" : "rgba(255,255,255,0.4)";
+                });
+            };
+
+            dots.forEach((dot, i) => {
+                dot.addEventListener("click", () => {
+                    setActive(i);
+                });
+            });
+
+            setInterval(() => {
+                const next = (current + 1) % total;
+                setActive(next);
+            }, intervalMs);
+
+            setActive(0);
+        }
+    }
+</script>
