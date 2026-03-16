@@ -1,63 +1,47 @@
 ---
-
+import NavLinks from "./NavLinks.astro";
 ---
 
 <div
-    class="bg-[#D9D9D910] w-full shadow-sm md:px-16 px-2 py-2 flex md:flex-row flex-col items-center justify-between fixed top-0 left-0 z-10"
+  class="bg-[#D9D9D910] w-full shadow-sm md:px-16 px-2 py-2 flex md:flex-row flex-col items-center justify-between fixed top-0 left-0 z-10"
 >
-    <div class="flex gap-4 items-center justify-between">
-        <img src="/logo.webp" alt="Maskottchen Logo" class="w-20 h-20" />
-        <button
-            class="md:hidden"
-            id="menu-toggle"
-            type="button"
-            aria-label="Abrir menú"
-        >
-            <span id="menu-icon" class="material-symbols-outlined">menu</span>
-        </button>
-    </div>
+  <div class="flex gap-4 items-center justify-between">
+    <img src="/logo.webp" alt="Maskottchen Logo" class="w-20 h-20" />
+    <button class="md:hidden" id="menu-toggle" type="button" aria-label="Abrir menú">
+      <span id="menu-icon" class="material-symbols-outlined">menu</span>
+    </button>
+  </div>
 
-    <ul class="flex items-center gap-4 md:flex hidden">
-        <li><a class="font-bold" href="/">Inicio</a></li>
-        <li><a class="font-bold" href="/about">Productos</a></li>
-        <li><a class="font-bold" href="/contact">Sobre Maskottchen</a></li>
-        <li><a class="font-bold" href="/contact">¿Donde Comprar?</a></li>
-        <li><a class="font-bold" href="/contact">Contacto</a></li>
-    </ul>
-    <ul
-        id="mobile-menu"
-        class="flex flex-col gap-4 hidden md:hidden self-start"
-    >
-        <li><a class="font-bold" href="/">Inicio</a></li>
-        <li><a class="font-bold" href="/about">Productos</a></li>
-        <li><a class="font-bold" href="/contact">Sobre Maskottchen</a></li>
-        <li><a class="font-bold" href="/contact">¿Donde Comprar?</a></li>
-        <li><a class="font-bold" href="/contact">Contacto</a></li>
-    </ul>
+  <ul class="flex items-center gap-4 md:flex hidden">
+    <NavLinks itemClass="font-bold" />
+  </ul>
+  <ul
+    id="mobile-menu"
+    class="flex flex-col gap-4 hidden md:hidden absolute left-0 top-full w-full bg-[#D9D9D980] p-4"
+  >
+    <NavLinks itemClass="font-bold text-white" />
+  </ul>
 </div>
 
 <script>
-    let isOpen = false;
+  let isOpen = false;
 
-    const button = document.getElementById("menu-toggle");
-    const icon = document.getElementById("menu-icon");
-    const mobileMenu = document.getElementById("mobile-menu");
+  const button = document.getElementById("menu-toggle");
+  const icon = document.getElementById("menu-icon");
+  const mobileMenu = document.getElementById("mobile-menu");
 
-    const render = () => {
-        if (!button || !icon) return;
-        icon.textContent = isOpen ? "close" : "menu";
-        button.setAttribute(
-            "aria-label",
-            isOpen ? "Cerrar menú" : "Abrir menú",
-        );
-        mobileMenu?.classList.toggle("hidden", !isOpen);
-    };
+  const render = () => {
+    if (!button || !icon) return;
+    icon.textContent = isOpen ? "close" : "menu";
+    button.setAttribute("aria-label", isOpen ? "Cerrar menú" : "Abrir menú");
+    mobileMenu?.classList.toggle("hidden", !isOpen);
+  };
 
-    const toggle = () => {
-        isOpen = !isOpen;
-        render();
-    };
-
+  const toggle = () => {
+    isOpen = !isOpen;
     render();
-    button?.addEventListener("click", toggle);
+  };
+
+  render();
+  button?.addEventListener("click", toggle);
 </script>
