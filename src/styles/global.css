@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* stylelint-disable-next-line at-rule-no-unknown */
 @theme inline {
     --font-sans: var(--font-maven-pro);
 }
@@ -20,6 +21,7 @@ body {
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
+    font-feature-settings: 'liga';
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
 }
