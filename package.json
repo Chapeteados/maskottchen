@@ -9,7 +9,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "format": "prettier --write \"src/**/*.{js,ts,astro,json}\""
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",
@@ -17,8 +18,11 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
+    "prettier": "^3.4.2",
     "@typescript-eslint/parser": "^8.57.1",
     "eslint": "^10.0.3",
-    "eslint-plugin-astro": "^1.6.0"
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-astro": "^1.6.0",
+    "prettier-plugin-astro": "^0.14.1"
   }
 }

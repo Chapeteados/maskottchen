@@ -1,0 +1,11 @@
+---
+const { itemClass = "" } = Astro.props as {
+  itemClass?: string;
+};
+---
+
+<li><a class={itemClass} href="/">Inicio</a></li>
+<li><a class={itemClass} href="/about">Productos</a></li>
+<li><a class={itemClass} href="/contact">Sobre Maskottchen</a></li>
+<li><a class={itemClass} href="/contact">¿Donde Comprar?</a></li>
+<li><a class={itemClass} href="/contact">Contacto</a></li>
