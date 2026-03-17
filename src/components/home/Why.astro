@@ -1,0 +1,43 @@
+---
+import Button from "../Button.astro";
+---
+
+<div class="relative flex flex-col md:flex-row items-center justify-center gap-16 p-16">
+  <img src="/why.png" alt="Why" class="w-full h-full object-cover max-w-full md:max-w-1/2" />
+  <div class="relative flex flex-col items-center justify-center gap-8">
+    <img
+      src="/paw.webp"
+      alt=""
+      class="hidden lg:block absolute -top-16 -left-6 w-20 h-20 object-contain"
+      aria-hidden="true"
+    />
+    <img
+      src="/paw.webp"
+      alt=""
+      class="hidden lg:block absolute top-1/2 -translate-y-1/2 -right-12 w-20 h-20 object-contain"
+      aria-hidden="true"
+    />
+    <img
+      src="/paw.webp"
+      alt=""
+      class="hidden lg:block absolute -bottom-12 left-8 w-20 h-20 object-contain"
+      aria-hidden="true"
+    />
+    <img
+      src="/paw.webp"
+      alt=""
+      class="hidden lg:block absolute -bottom-2 -right-4 w-20 h-20 object-contain"
+      aria-hidden="true"
+    />
+
+    <h2 class="text-5xl md:text-6xl font-bold uppercase leading-[30px] md:leading-[45px]">
+      ¿Por qué <br />
+      <span class="text-4xl md:text-5xl block">&nbsp;&nbsp;Maskottchen?</span>
+    </h2>
+    <p class="text-base md:text-lg text-center font-bold">
+      Tu perro merece lo mejor. <br /> En Maskottchen combinamos amor, nutrición y calidad. Ellos confían
+      en tí, y tú, ¡puedes confíar en nosotros!
+    </p>
+    <Button label="Conoce más" href="/" />
+  </div>
+</div>
