@@ -58,7 +58,7 @@ export type StrapiSlidesResponse = {
   meta?: StrapiPaginationMeta;
 };
 
-/** Props normalizadas para el hero (`Slider` / `HeroSlide`). */
+/** Props normalizadas para el hero (`HeroSlider` / `HeroSlide`). */
 export type HomeHeroSlide = {
   image?: string;
   youtubeUrl?: string;
