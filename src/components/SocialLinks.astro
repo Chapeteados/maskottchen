@@ -1,0 +1,37 @@
+---
+import { FACEBOOK_URL, INSTAGRAM_URL } from "../lib/constants";
+
+const facebookUrl = FACEBOOK_URL;
+const instagramUrl = INSTAGRAM_URL;
+
+const {
+  linkClass = "inline-flex text-white transition hover:opacity-80",
+  iconClass = "h-7 w-7 object-contain brightness-0 invert",
+} = Astro.props as {
+  linkClass?: string;
+  iconClass?: string;
+};
+---
+
+<li>
+  <a
+    href={facebookUrl || "#"}
+    target="_blank"
+    rel="noopener noreferrer"
+    class={linkClass}
+    aria-label="Facebook"
+  >
+    <img src="/icons/facebook.svg" alt="" width="28" height="28" class={iconClass} />
+  </a>
+</li>
+<li>
+  <a
+    href={instagramUrl || "#"}
+    target="_blank"
+    rel="noopener noreferrer"
+    class={linkClass}
+    aria-label="Instagram"
+  >
+    <img src="/icons/instagram.svg" alt="" width="28" height="28" class={iconClass} />
+  </a>
+</li>

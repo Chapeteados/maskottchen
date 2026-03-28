@@ -2,11 +2,8 @@
 
 /* stylelint-disable-next-line at-rule-no-unknown */
 @theme inline {
-    --font-sans: var(--font-maven-pro);
-}
-
-body {
-    font-family: var(--font-maven-pro);
+    /* Maven Pro la inyecta Astro (`fonts` + <Font cssVariable="--font-maven-pro" />) */
+    --font-sans: var(--font-maven-pro), ui-sans-serif, system-ui, sans-serif;
 }
 
 .material-symbols-outlined {

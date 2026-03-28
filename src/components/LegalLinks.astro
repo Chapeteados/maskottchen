@@ -1,0 +1,13 @@
+---
+const { itemClass = "text-sm text-white underline-offset-2 hover:underline sm:text-base" } =
+  Astro.props as {
+    itemClass?: string;
+  };
+---
+
+<li>
+  <a href="/" class={itemClass}>Terminos y Condiciones</a>
+</li>
+<li>
+  <a href="/" class={itemClass}>Aviso de Privacidad</a>
+</li>

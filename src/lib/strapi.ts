@@ -1,11 +1,13 @@
 /**
- * Cliente REST Strapi (productos, slides del hero).
+ * Cliente REST Strapi (GET productos/slides, POST genérico).
  *
- * Base URL: `PUBLIC_STRAPI_URL` en `.env`. Sin ella: en el navegador → Railway; en servidor Astro dev → localhost.
+ * Base URL: ver `src/lib/constants.ts` (`STRAPI_BASE_URL_*`).
+ * URLs: `strapiApiUrl("slides", query, base)` — mismo patrón que antes (`base` + `/api/` + recurso). POST: `postStrapi`.
  */
 
 import type {
   HomeHeroSlide,
+  StrapiPostResult,
   StrapiProduct,
   StrapiSlide,
   StrapiSlideImage,
@@ -14,38 +16,42 @@ import type {
 } from "./strapi.types";
 
 export type {
+  ContactFormPayload,
+  ContactFormValues,
   HomeHeroSlide,
   StrapiGalleryImage,
   StrapiPresentation,
   StrapiProduct,
+  StrapiPostResult,
   StrapiProductsResponse,
   StrapiSlide,
   StrapiSlideImage,
   StrapiSlidesResponse,
   StrapiPaginationMeta,
 } from "./strapi.types";
+import { STRAPI_BASE_URL_DEV, STRAPI_BASE_URL_PROD } from "./constants";
 
 const JSON_HEADERS = { Accept: "application/json" } as const;
 
-const DEFAULT_PROD_STRAPI = "https://maskottchen-be-production.up.railway.app";
-
 /**
- * Base URL de Strapi.
- * - Si `PUBLIC_STRAPI_URL` está definida, se usa siempre.
- * - En el **navegador**, sin variable: URL pública (Railway) para que el `fetch` sea cross-origin
- *   visible en Network y no apunte por defecto a localhost (donde muchas veces no hay Strapi en marcha).
- * - En SSR / Node (sin `window`): `astro dev` → localhost; build/prod → Railway.
+ * Base URL de Strapi: solo `import.meta.env.DEV` (astro dev) vs producción.
  */
 export function getStrapiBaseUrl(): string {
-  const raw = import.meta.env.PUBLIC_STRAPI_URL;
-  if (typeof raw === "string" && raw.trim().length > 0) {
-    return raw.trim().replace(/\/$/, "");
-  }
-  if (typeof window !== "undefined") {
-    return DEFAULT_PROD_STRAPI;
-  }
-  const local = "http://localhost:1337";
-  return import.meta.env.DEV ? local : DEFAULT_PROD_STRAPI;
+  return import.meta.env.DEV ? STRAPI_BASE_URL_DEV : STRAPI_BASE_URL_PROD;
+}
+
+/**
+ * Igual que en getSlides/getHomeProducts: `{base}/api/{path}` y query opcional sin `?` inicial.
+ * Pasa `baseUrl` si ya llamaste a `getStrapiBaseUrl()` y quieres evitar repetir la llamada.
+ */
+export function strapiApiUrl(path: string, searchParams?: string, baseUrl?: string): string {
+  const base = (baseUrl ?? getStrapiBaseUrl()).replace(/\/$/, "");
+  const segment = path.trim().replace(/^\/+|\/+$/g, "");
+  const qs =
+    searchParams != null && searchParams.length > 0
+      ? `?${searchParams.replace(/^\?/, "")}`
+      : "";
+  return `${base}/api/${segment}${qs}`;
 }
 
 const DEFAULT_SLIDE_DURATION_MS = 10_000;
@@ -81,8 +87,7 @@ function pickStrapiMediaUrl(raw: StrapiSlide["image"]): string | undefined {
     o.attributes?.url != null && String(o.attributes.url).trim() !== ""
       ? String(o.attributes.url).trim()
       : undefined;
-  const direct =
-    o.url != null && String(o.url).trim() !== "" ? String(o.url).trim() : undefined;
+  const direct = o.url != null && String(o.url).trim() !== "" ? String(o.url).trim() : undefined;
   return direct ?? fromAttrs;
 }
 
@@ -126,7 +131,7 @@ function normalizeSlide(row: StrapiSlide, apiBase: string): HomeHeroSlide | null
  */
 export async function getSlides(): Promise<HomeHeroSlide[]> {
   const base = getStrapiBaseUrl();
-  const url = `${base}/api/slides?${SLIDES_QUERY}`;
+  const url = strapiApiUrl("slides", SLIDES_QUERY, base);
 
   const res = await fetch(url, { headers: JSON_HEADERS });
 
@@ -150,7 +155,7 @@ export async function getSlides(): Promise<HomeHeroSlide[]> {
  */
 export async function getHomeProducts(): Promise<StrapiProduct[]> {
   const base = getStrapiBaseUrl();
-  const url = `${base}/api/products?${HOME_PRODUCTS_QUERY}`;
+  const url = strapiApiUrl("products", HOME_PRODUCTS_QUERY, base);
 
   const res = await fetch(url, { headers: JSON_HEADERS });
 
@@ -162,4 +167,60 @@ export async function getHomeProducts(): Promise<StrapiProduct[]> {
   const json = (await res.json()) as StrapiProductsResponse;
   const raw = Array.isArray(json.data) ? json.data : [];
   return raw.slice(0, HOME_PRODUCTS_LIMIT);
+}
+
+function buildStrapiPostHeaders(): Record<string, string> {
+  return {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  };
+}
+
+/**
+ * POST REST Strapi v5: `{ data: fields }` → `POST /api/{path}`.
+ */
+export async function postStrapi(
+  path: string,
+  fields: Record<string, unknown>,
+): Promise<StrapiPostResult> {
+  const url = strapiApiUrl(path);
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: buildStrapiPostHeaders(),
+      body: JSON.stringify({ data: fields }),
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      let detail = res.statusText;
+      try {
+        const errJson = JSON.parse(text) as { error?: { message?: string } };
+        if (errJson?.error?.message) {
+          detail = errJson.error.message;
+        } else if (text) {
+          detail = text.slice(0, 240);
+        }
+      } catch {
+        if (text) {
+          detail = text.slice(0, 240);
+        }
+      }
+      // 405 en POST suele ser ruta sin collection en Strapi (GET 404) o path distinto al API ID plural.
+      if (res.status === 405) {
+        return {
+          ok: false,
+          message:
+            "El backend no acepta POST en esta ruta. En Strapi crea el collection type, usa el mismo API ID (plural) que en el front y activa create para el rol Public.",
+        };
+      }
+      return { ok: false, message: detail || `Error ${res.status}` };
+    }
+
+    return { ok: true };
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Error de red";
+    return { ok: false, message };
+  }
 }

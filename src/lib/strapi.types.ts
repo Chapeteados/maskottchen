@@ -77,6 +77,19 @@ export type StrapiSlidesResponse = {
   meta?: StrapiPaginationMeta;
 };
 
+/** Payload del formulario de contacto (alinear nombres con el content type en Strapi). */
+export type ContactFormPayload = {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+};
+
+export type ContactFormValues = ContactFormPayload;
+
+/** Resultado de un POST genérico a Strapi. */
+export type StrapiPostResult = { ok: true } | { ok: false; message: string };
+
 /** Props normalizadas para el hero (`HeroSlider` / `HeroSlide`). */
 export type HomeHeroSlide = {
   image?: string;
