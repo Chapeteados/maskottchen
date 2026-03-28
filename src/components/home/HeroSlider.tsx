@@ -1,17 +1,35 @@
 import { useEffect, useState } from "react";
 
+import { getSlides } from "../../lib/strapi";
 import type { HomeHeroSlide } from "../../lib/strapi.types";
 
 import { HeroSlide } from "./HeroSlide";
 
 const DEFAULT_DURATION_MS = 10_000;
 
-type HeroSliderProps = {
-  slides: HomeHeroSlide[];
-};
-
-export default function HeroSlider({ slides }: HeroSliderProps) {
+export default function HeroSlider() {
+  const [slides, setSlides] = useState<HomeHeroSlide[]>([]);
+  const [loading, setLoading] = useState(true);
   const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getSlides();
+        if (!cancelled) {
+          setSlides(data);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const total = slides.length;
 
@@ -31,6 +49,17 @@ export default function HeroSlider({ slides }: HeroSliderProps) {
       window.clearTimeout(id);
     };
   }, [current, slides, total]);
+
+  if (loading) {
+    return (
+      <section
+        className="relative h-[100dvh] md:h-[100vh] overflow-hidden bg-neutral-200 animate-pulse"
+        id="hero-slider"
+        aria-busy="true"
+        aria-label="Cargando carrusel"
+      />
+    );
+  }
 
   if (total === 0) {
     return null;

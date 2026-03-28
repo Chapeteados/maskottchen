@@ -1,0 +1,20 @@
+---
+export const prerender = false;
+
+import HeroSlider from "../components/home/HeroSlider.tsx";
+import Products from "../components/home/Products.tsx";
+import Attributes from "../components/home/Attributes.astro";
+import Why from "../components/home/Why.astro";
+import Layout from "../layouts/Layout.astro";
+import { getHomeProducts, getSlides } from "../lib/strapi";
+
+const slides = await getSlides();
+const products = await getHomeProducts();
+---
+
+<Layout>
+  <HeroSlider slides={slides} client:load />
+  <Attributes />
+  <Why />
+  <Products products={products} client:load />
+</Layout>

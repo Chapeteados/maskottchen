@@ -1,12 +1,32 @@
-import type { StrapiProduct } from "../../lib/strapi";
+import { useEffect, useState } from "react";
+
+import { getHomeProducts, type StrapiProduct } from "../../lib/strapi";
 
 import { ProductCard } from "./ProductCard";
 
-type ProductsProps = {
-  products: StrapiProduct[];
-};
+export default function Products() {
+  const [products, setProducts] = useState<StrapiProduct[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default function Products({ products }: ProductsProps) {
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const data = await getHomeProducts();
+        if (!cancelled) {
+          setProducts(data);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <section className="bg-white py-16 md:py-24 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
@@ -14,7 +34,11 @@ export default function Products({ products }: ProductsProps) {
           Nuestros productos
         </h2>
 
-        {products.length === 0 ? (
+        {loading ? (
+          <p className="text-center text-neutral-600" aria-busy="true">
+            Cargando productos…
+          </p>
+        ) : products.length === 0 ? (
           <p className="text-center text-neutral-600">No hay productos disponibles por ahora.</p>
         ) : (
           <ul className="grid gap-8 md:gap-10 md:grid-cols-2 lg:grid-cols-3 items-stretch">
