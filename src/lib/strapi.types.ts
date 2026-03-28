@@ -38,15 +38,34 @@ export type StrapiProductsResponse = {
   meta?: StrapiPaginationMeta;
 };
 
-/** Entrada de `/api/slides`. El vídeo es siempre URL de YouTube (`youtubeUrl`). */
+/** Media (imagen) en respuestas REST de Strapi v4/v5. */
+export type StrapiSlideImage = {
+  id?: number;
+  documentId?: string;
+  url?: string | null;
+  alternativeText?: string | null;
+  width?: number;
+  height?: number;
+  /** Strapi v4 anidaba en attributes */
+  attributes?: {
+    url?: string | null;
+    alternativeText?: string | null;
+    width?: number;
+    height?: number;
+  };
+};
+
+/** Entrada de `/api/slides` con `populate` de imagen. */
 export type StrapiSlide = {
   id: number;
   documentId: string;
   title: string | null;
   description: string | null;
   youtubeUrl: string | null;
-  /** URL absoluta o relativa de imagen de fondo (si el modelo la expone como string). */
+  /** Campo texto legacy (si existe en el modelo). */
   imageUrl?: string | null;
+  /** Relación Media (p. ej. `populate[image]=true`). */
+  image?: StrapiSlideImage | StrapiSlideImage[] | { data?: StrapiSlideImage | null } | null;
   buttonLabel: string | null;
   buttonHref: string | null;
   durationMs: number | null;

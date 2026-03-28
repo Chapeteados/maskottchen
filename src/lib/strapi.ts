@@ -8,6 +8,7 @@ import type {
   HomeHeroSlide,
   StrapiProduct,
   StrapiSlide,
+  StrapiSlideImage,
   StrapiProductsResponse,
   StrapiSlidesResponse,
 } from "./strapi.types";
@@ -19,6 +20,7 @@ export type {
   StrapiProduct,
   StrapiProductsResponse,
   StrapiSlide,
+  StrapiSlideImage,
   StrapiSlidesResponse,
   StrapiPaginationMeta,
 } from "./strapi.types";
@@ -48,7 +50,7 @@ export function getStrapiBaseUrl(): string {
 
 const DEFAULT_SLIDE_DURATION_MS = 10_000;
 
-const SLIDES_QUERY = "sort[0]=order:asc&pagination[pageSize]=50";
+const SLIDES_QUERY = "sort[0]=order:asc&pagination[pageSize]=50&populate[image]=true";
 
 /** Máximo de productos en la home (fijos). */
 const HOME_PRODUCTS_LIMIT = 3;
@@ -58,9 +60,49 @@ const HOME_PRODUCTS_QUERY =
   "&pagination[limit]=3" +
   "&sort[0]=createdAt:asc";
 
-function normalizeSlide(row: StrapiSlide): HomeHeroSlide | null {
+/** Saca la primera URL de un campo Media (v4/v5) o undefined. */
+function pickStrapiMediaUrl(raw: StrapiSlide["image"]): string | undefined {
+  if (raw == null) {
+    return undefined;
+  }
+  if (Array.isArray(raw)) {
+    const first = raw[0];
+    return pickStrapiMediaUrl(first ?? null);
+  }
+  if (typeof raw === "object" && "data" in raw && raw.data != null) {
+    const d = raw.data;
+    if (Array.isArray(d)) {
+      return pickStrapiMediaUrl(d[0] ?? null);
+    }
+    return pickStrapiMediaUrl(d as StrapiSlide["image"]);
+  }
+  const o = raw as StrapiSlideImage;
+  const fromAttrs =
+    o.attributes?.url != null && String(o.attributes.url).trim() !== ""
+      ? String(o.attributes.url).trim()
+      : undefined;
+  const direct =
+    o.url != null && String(o.url).trim() !== "" ? String(o.url).trim() : undefined;
+  return direct ?? fromAttrs;
+}
+
+/** Convierte URL de upload (`/uploads/...`) en absoluta usando el mismo host que la API. */
+function toAbsoluteMediaUrl(base: string, pathOrUrl: string): string {
+  const trimmed = pathOrUrl.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  const baseClean = base.replace(/\/$/, "");
+  return trimmed.startsWith("/") ? `${baseClean}${trimmed}` : `${baseClean}/${trimmed}`;
+}
+
+function normalizeSlide(row: StrapiSlide, apiBase: string): HomeHeroSlide | null {
   const youtubeUrl = row.youtubeUrl?.trim() || undefined;
-  const image = row.imageUrl?.trim() || undefined;
+  const fromField = row.imageUrl?.trim() || undefined;
+  const fromMedia = pickStrapiMediaUrl(row.image);
+  const imageRaw = fromField ?? fromMedia;
+  const image =
+    imageRaw != null && imageRaw.length > 0 ? toAbsoluteMediaUrl(apiBase, imageRaw) : undefined;
   if (!youtubeUrl && !image) {
     return null;
   }
@@ -97,7 +139,7 @@ export async function getSlides(): Promise<HomeHeroSlide[]> {
   const raw = Array.isArray(json.data) ? json.data : [];
   const out: HomeHeroSlide[] = [];
   for (const row of raw) {
-    const n = normalizeSlide(row);
+    const n = normalizeSlide(row, base);
     if (n) out.push(n);
   }
   return out;
