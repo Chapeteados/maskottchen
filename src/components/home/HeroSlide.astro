@@ -2,14 +2,7 @@
 import Button from "../Button.astro";
 import { getYoutubeEmbedUrlFromInput } from "../../lib/youtube";
 
-const {
-  image,
-  youtubeUrl,
-  title,
-  description,
-  buttonLabel,
-  buttonHref,
-} = Astro.props as {
+const { image, youtubeUrl, title, description, buttonLabel, buttonHref } = Astro.props as {
   image?: string;
   youtubeUrl?: string;
   title?: string;
@@ -18,9 +11,7 @@ const {
   buttonHref?: string;
 };
 
-const youtubeEmbedSrc = youtubeUrl
-  ? getYoutubeEmbedUrlFromInput(youtubeUrl)
-  : null;
+const youtubeEmbedSrc = youtubeUrl ? getYoutubeEmbedUrlFromInput(youtubeUrl) : null;
 const hasYoutube = Boolean(youtubeEmbedSrc);
 const hasMedia = hasYoutube;
 ---
