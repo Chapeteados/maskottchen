@@ -1,7 +1,7 @@
 /**
  * Cliente REST Strapi (productos, slides del hero).
  *
- * Base URL: `PUBLIC_STRAPI_URL` en `.env`, o si no está: `astro dev` → localhost:1337, build → prod.
+ * Base URL: `PUBLIC_STRAPI_URL` en `.env`. Sin ella: en el navegador → Railway; en servidor Astro dev → localhost.
  */
 
 import type {
@@ -25,15 +25,25 @@ export type {
 
 const JSON_HEADERS = { Accept: "application/json" } as const;
 
-/** `PUBLIC_STRAPI_URL` o, por defecto, local en dev y Railway en build. */
+const DEFAULT_PROD_STRAPI = "https://maskottchen-be-production.up.railway.app";
+
+/**
+ * Base URL de Strapi.
+ * - Si `PUBLIC_STRAPI_URL` está definida, se usa siempre.
+ * - En el **navegador**, sin variable: URL pública (Railway) para que el `fetch` sea cross-origin
+ *   visible en Network y no apunte por defecto a localhost (donde muchas veces no hay Strapi en marcha).
+ * - En SSR / Node (sin `window`): `astro dev` → localhost; build/prod → Railway.
+ */
 export function getStrapiBaseUrl(): string {
-  const prod = "https://maskottchen-be-production.up.railway.app";
-  const local = "http://localhost:1337";
   const raw = import.meta.env.PUBLIC_STRAPI_URL;
   if (typeof raw === "string" && raw.trim().length > 0) {
     return raw.trim().replace(/\/$/, "");
   }
-  return import.meta.env.DEV ? local : prod;
+  if (typeof window !== "undefined") {
+    return DEFAULT_PROD_STRAPI;
+  }
+  const local = "http://localhost:1337";
+  return import.meta.env.DEV ? local : DEFAULT_PROD_STRAPI;
 }
 
 const DEFAULT_SLIDE_DURATION_MS = 10_000;
