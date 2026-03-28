@@ -1,56 +1,46 @@
 /**
- * Tipos y cliente para la API REST de Strapi (productos).
- * Home: getHomeProducts() — máx. 3, orden por createdAt asc (no entran productos nuevos).
+ * Cliente REST Strapi (productos, slides del hero).
+ *
+ * Base URL: `PUBLIC_STRAPI_URL` en `.env`, o si no está: `astro dev` → localhost:1337, build → prod.
  */
 
-export type StrapiPresentation = {
-  id: number;
-  documentId: string;
-  name: string;
-};
+import type {
+  HomeHeroSlide,
+  StrapiProduct,
+  StrapiSlide,
+  StrapiProductsResponse,
+  StrapiSlidesResponse,
+} from "./strapi.types";
 
-export type StrapiGalleryImage = {
-  id: number;
-  documentId: string;
-  name: string;
-  url: string;
-  alternativeText: string | null;
-  width: number;
-  height: number;
-};
+export type {
+  HomeHeroSlide,
+  StrapiGalleryImage,
+  StrapiPresentation,
+  StrapiProduct,
+  StrapiProductsResponse,
+  StrapiSlide,
+  StrapiSlidesResponse,
+  StrapiPaginationMeta,
+} from "./strapi.types";
 
-export type StrapiProduct = {
-  id: number;
-  documentId: string;
-  name: string;
-  description: string;
-  presentations: StrapiPresentation[];
-  gallery: StrapiGalleryImage[];
-};
+const JSON_HEADERS = { Accept: "application/json" } as const;
 
-export type StrapiProductsResponse = {
-  data: StrapiProduct[];
-  meta?: {
-    pagination?: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-};
-
-const DEFAULT_STRAPI_URL = "https://maskottchen-be-production.up.railway.app";
-
-function getStrapiBaseUrl(): string {
-  const fromEnv = import.meta.env.PUBLIC_STRAPI_URL;
-  if (typeof fromEnv === "string" && fromEnv.length > 0) {
-    return fromEnv.replace(/\/$/, "");
+/** `PUBLIC_STRAPI_URL` o, por defecto, local en dev y Railway en build. */
+export function getStrapiBaseUrl(): string {
+  const prod = "https://maskottchen-be-production.up.railway.app";
+  const local = "http://localhost:1337";
+  const raw = import.meta.env.PUBLIC_STRAPI_URL;
+  if (typeof raw === "string" && raw.trim().length > 0) {
+    return raw.trim().replace(/\/$/, "");
   }
-  return DEFAULT_STRAPI_URL;
+  return import.meta.env.DEV ? local : prod;
 }
 
-/** Máximo de productos en la home (fijos; no se muestran más aunque Strapi tenga más). */
+const DEFAULT_SLIDE_DURATION_MS = 10_000;
+
+const SLIDES_QUERY = "sort[0]=order:asc&pagination[pageSize]=50";
+
+/** Máximo de productos en la home (fijos). */
 const HOME_PRODUCTS_LIMIT = 3;
 
 const HOME_PRODUCTS_QUERY =
@@ -58,17 +48,59 @@ const HOME_PRODUCTS_QUERY =
   "&pagination[limit]=3" +
   "&sort[0]=createdAt:asc";
 
+function normalizeSlide(row: StrapiSlide): HomeHeroSlide | null {
+  const youtubeUrl = row.youtubeUrl?.trim() || undefined;
+  const image = row.imageUrl?.trim() || undefined;
+  if (!youtubeUrl && !image) {
+    return null;
+  }
+  const durationMs =
+    row.durationMs != null && Number.isFinite(row.durationMs) && row.durationMs > 0
+      ? row.durationMs
+      : DEFAULT_SLIDE_DURATION_MS;
+  return {
+    image,
+    youtubeUrl,
+    title: row.title?.trim() || undefined,
+    description: row.description?.trim() || undefined,
+    buttonLabel: row.buttonLabel?.trim() || undefined,
+    buttonHref: row.buttonHref?.trim() || undefined,
+    durationMs,
+  };
+}
+
 /**
- * Solo los primeros 3 productos creados en Strapi (home).
- * Con `pagination[limit]=3` y `sort=createdAt:asc`, los que subas después no aparecen aquí.
+ * Slides del hero ordenados por `order` asc. Se omiten entradas sin `youtubeUrl` ni `imageUrl`.
+ */
+export async function getSlides(): Promise<HomeHeroSlide[]> {
+  const base = getStrapiBaseUrl();
+  const url = `${base}/api/slides?${SLIDES_QUERY}`;
+
+  const res = await fetch(url, { headers: JSON_HEADERS });
+
+  if (!res.ok) {
+    console.error(`[strapi] getSlides failed: ${res.status} ${res.statusText}`);
+    return [];
+  }
+
+  const json = (await res.json()) as StrapiSlidesResponse;
+  const raw = Array.isArray(json.data) ? json.data : [];
+  const out: HomeHeroSlide[] = [];
+  for (const row of raw) {
+    const n = normalizeSlide(row);
+    if (n) out.push(n);
+  }
+  return out;
+}
+
+/**
+ * Primeros productos de la home (máx. `HOME_PRODUCTS_LIMIT`), orden por `createdAt` asc.
  */
 export async function getHomeProducts(): Promise<StrapiProduct[]> {
   const base = getStrapiBaseUrl();
   const url = `${base}/api/products?${HOME_PRODUCTS_QUERY}`;
 
-  const res = await fetch(url, {
-    headers: { Accept: "application/json" },
-  });
+  const res = await fetch(url, { headers: JSON_HEADERS });
 
   if (!res.ok) {
     console.error(`[strapi] getHomeProducts failed: ${res.status} ${res.statusText}`);
