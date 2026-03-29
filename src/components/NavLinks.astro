@@ -1,11 +1,43 @@
 ---
-const { itemClass = "" } = Astro.props as {
+const pathnameRaw = Astro.url.pathname;
+const pathname = pathnameRaw.replace(/\/$/, "") || "/";
+
+function isActive(href: string): boolean {
+  const h = href === "/" ? "/" : href.replace(/\/$/, "");
+  if (h === "/") {
+    return pathname === "/";
+  }
+  return pathname === h;
+}
+
+const links = [
+  { href: "/", label: "Inicio" },
+  { href: "/productos", label: "Productos" },
+  { href: "/nosotros", label: "Sobre Maskottchen" },
+  { href: "/donde-comprar", label: "¿Donde Comprar?" },
+  { href: "/contacto", label: "Contacto" },
+] as const;
+
+const { itemClass = "", activeClass = "!text-black font-extrabold" } = Astro.props as {
   itemClass?: string;
+  /** Se añade al `itemClass` cuando la ruta actual coincide con `href`. */
+  activeClass?: string;
 };
 ---
 
-<li><a class={itemClass} href="/">Inicio</a></li>
-<li><a class={itemClass} href="/productos">Productos</a></li>
-<li><a class={itemClass} href="/nosotros">Sobre Maskottchen</a></li>
-<li><a class={itemClass} href="/contacto">¿Donde Comprar?</a></li>
-<li><a class={itemClass} href="/contacto">Contacto</a></li>
+{
+  links.map(({ href, label }) => {
+    const active = isActive(href);
+    return (
+      <li>
+        <a
+          href={href}
+          class:list={[itemClass, active && activeClass, "uppercase"]}
+          aria-current={active ? "page" : undefined}
+        >
+          {label}
+        </a>
+      </li>
+    );
+  })
+}

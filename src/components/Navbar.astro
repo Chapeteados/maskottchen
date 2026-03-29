@@ -1,9 +1,10 @@
 ---
 import NavLinks from "./NavLinks.astro";
+import SocialLinks from "./SocialLinks.astro";
 ---
 
 <div
-  class="bg-[#D9D9D910] w-full shadow-sm md:px-16 px-2 py-2 flex md:flex-row flex-col items-center justify-between fixed top-0 left-0 z-10"
+  class="bg-[#D9D9D925] w-full shadow-sm md:px-16 px-2 py-2 flex md:flex-row flex-col items-center justify-between fixed top-0 left-0 z-10"
 >
   <div class="flex gap-4 items-center justify-between">
     <img src="/logo.webp" alt="Maskottchen Logo" class="w-20 h-20" />
@@ -13,13 +14,17 @@ import NavLinks from "./NavLinks.astro";
   </div>
 
   <ul class="flex items-center gap-4 md:flex hidden">
-    <NavLinks itemClass="font-bold" />
+    <NavLinks
+      itemClass="text-white font-bold [text-shadow:0_4px_4px_rgba(0,0,0,0.25)]"
+      activeClass="!text-black font-extrabold"
+    />
+    <SocialLinks />
   </ul>
   <ul
     id="mobile-menu"
     class="flex flex-col gap-4 hidden md:hidden absolute left-0 top-full w-full bg-[#D9D9D980] p-4"
   >
-    <NavLinks itemClass="font-bold text-white" />
+    <NavLinks itemClass="text-white font-bold" activeClass="!text-black font-extrabold" />
   </ul>
 </div>
 
