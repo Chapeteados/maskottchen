@@ -4,7 +4,39 @@ on:
   push:
   pull_request:
 
+# Commit statuses para Vercel Deployment Checks (paso "Notify Vercel").
+permissions:
+  contents: read
+  statuses: write
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm run lint
+
+      # Debe coincidir con el nombre del check en Vercel → Settings → Deployment Checks.
+      - name: Notify Vercel
+        if: always()
+        uses: vercel/repository-dispatch/actions/status@v1
+        with:
+          name: Vercel - maskottchen: lint
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -24,3 +56,32 @@ jobs:
 
       - name: Run tests
         run: pnpm run test
+
+  # Solo corre si `test` pasó. Despliega producción en push a `main`.
+  # Si también tienes el proyecto conectado en Vercel (Git), desactiva allí el
+  # despliegue automático de Production para no duplicar builds.
+  deploy:
+    needs: [lint, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: npx vercel deploy --prod --yes
