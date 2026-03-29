@@ -48,7 +48,7 @@ describe("useAsyncResource", () => {
     const fetcher = vi.fn().mockResolvedValueOnce("first").mockResolvedValueOnce("second");
     const { result, rerender } = renderHook(
       ({ key }: { key: number }) => useAsyncResource(fetcher, [key]),
-      { initialProps: { key: 1 } },
+      { initialProps: { key: 1 } }
     );
 
     await waitFor(() => {
@@ -64,10 +64,5 @@ describe("useAsyncResource", () => {
     });
     expect(result.current.data).toBe("second");
     expect(fetcher).toHaveBeenCalledTimes(2);
-  });
-
-  /** TODO: remove after you confirm CI fails and deploy is blocked */
-  it("TEMP — intentional failure to verify CI / Vercel gate", () => {
-    throw new Error("Delete this test once the pipeline check is confirmed");
   });
 });
