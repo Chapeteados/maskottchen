@@ -38,6 +38,29 @@ export type StrapiProductsResponse = {
   meta?: StrapiPaginationMeta;
 };
 
+/** Entrada de `/api/partners` (Strapi v5, campos alineados con el content-type). */
+export type StrapiPartner = {
+  id: number;
+  documentId: string;
+  name: string | null;
+  address: string | null;
+  phone: string | null;
+};
+
+export type StrapiPartnersResponse = {
+  data: StrapiPartner[];
+  meta?: StrapiPaginationMeta;
+};
+
+/** Partner normalizado para la UI (`PartnerCard`). */
+export type Partner = {
+  id: number;
+  documentId: string;
+  name: string;
+  address: string;
+  phone: string;
+};
+
 /** Media (imagen) en respuestas REST de Strapi v4/v5. */
 export type StrapiSlideImage = {
   id?: number;

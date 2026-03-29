@@ -1,31 +1,11 @@
-import { useEffect, useState } from "react";
-
 import { getHomeProducts, type StrapiProduct } from "../../lib/strapi";
+import { useAsyncResource } from "../../hooks/useAsyncResource";
 
 import { ProductCard } from "./ProductCard";
 
 export default function Products() {
-  const [products, setProducts] = useState<StrapiProduct[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await getHomeProducts();
-        if (!cancelled) {
-          setProducts(data);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { data, loading } = useAsyncResource(getHomeProducts, []);
+  const products: StrapiProduct[] = data ?? [];
 
   return (
     <section className="bg-white py-16 md:py-24 px-4 md:px-8">

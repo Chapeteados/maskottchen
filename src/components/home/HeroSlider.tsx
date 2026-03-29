@@ -2,34 +2,16 @@ import { useEffect, useState } from "react";
 
 import { getSlides } from "../../lib/strapi";
 import type { HomeHeroSlide } from "../../lib/strapi.types";
+import { useAsyncResource } from "../../hooks/useAsyncResource";
 
 import { HeroSlide } from "./HeroSlide";
 
 const DEFAULT_DURATION_MS = 10_000;
 
 export default function HeroSlider() {
-  const [slides, setSlides] = useState<HomeHeroSlide[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, loading } = useAsyncResource(getSlides, []);
+  const slides: HomeHeroSlide[] = data ?? [];
   const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await getSlides();
-        if (!cancelled) {
-          setSlides(data);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const total = slides.length;
 

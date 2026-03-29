@@ -1,7 +1,6 @@
-import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
-import { sendContactForm } from "../../lib/contact/sendContactForm";
+import { useContactFormSubmit } from "../../hooks/useContactFormSubmit";
 import { primaryButtonSubmitClass } from "../../lib/primaryButtonClasses";
 import type { ContactFormValues } from "../../lib/strapi.types";
 
@@ -11,11 +10,6 @@ import { FormTextField } from "./FormTextField";
 export type { ContactFormValues };
 
 export default function Contact() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitOk, setSubmitOk] = useState(false);
-  const submitLockRef = useRef(false);
-
   const {
     register,
     control,
@@ -31,31 +25,13 @@ export default function Contact() {
     },
   });
 
-  async function onSubmit(data: ContactFormValues) {
-    if (submitLockRef.current) {
-      return;
-    }
-    submitLockRef.current = true;
-    setSubmitError(null);
-    setSubmitOk(false);
-    setIsSubmitting(true);
-    try {
-      const result = await sendContactForm(data);
-      if (result.ok) {
-        setSubmitOk(true);
-        reset();
-        return;
-      }
-      setSubmitError(result.message);
-    } finally {
-      submitLockRef.current = false;
-      setIsSubmitting(false);
-    }
-  }
+  const { submit, isSubmitting, submitError, submitOk } = useContactFormSubmit({
+    onSuccess: reset,
+  });
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(submit)}
       className="flex w-full max-w-md flex-col gap-4"
       noValidate
     >

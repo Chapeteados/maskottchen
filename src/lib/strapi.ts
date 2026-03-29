@@ -1,5 +1,5 @@
 /**
- * Cliente REST Strapi (GET productos/slides, POST genérico).
+ * Cliente REST Strapi (GET productos/slides/partners, POST genérico).
  *
  * Base URL: ver `src/lib/constants.ts` (`STRAPI_BASE_URL_*`).
  * URLs: `strapiApiUrl("slides", query, base)` — mismo patrón que antes (`base` + `/api/` + recurso). POST: `postStrapi`.
@@ -7,8 +7,11 @@
 
 import type {
   HomeHeroSlide,
+  Partner,
+  StrapiPartner,
   StrapiPostResult,
   StrapiProduct,
+  StrapiPartnersResponse,
   StrapiSlide,
   StrapiSlideImage,
   StrapiProductsResponse,
@@ -19,7 +22,9 @@ export type {
   ContactFormPayload,
   ContactFormValues,
   HomeHeroSlide,
+  Partner,
   StrapiGalleryImage,
+  StrapiPartner,
   StrapiPresentation,
   StrapiProduct,
   StrapiPostResult,
@@ -65,6 +70,48 @@ const HOME_PRODUCTS_QUERY =
   "populate[0]=presentations&populate[1]=gallery" +
   "&pagination[limit]=3" +
   "&sort[0]=createdAt:asc";
+
+const PARTNERS_QUERY = "pagination[pageSize]=100&sort[0]=name:asc";
+
+function normalizePartner(row: StrapiPartner): Partner | null {
+  const name = row.name?.trim();
+  if (!name) {
+    return null;
+  }
+  return {
+    id: row.id,
+    documentId: row.documentId,
+    name,
+    address: row.address?.trim() ?? "",
+    phone: row.phone?.trim() ?? "",
+  };
+}
+
+/**
+ * Socios / distribuidores (`GET /api/partners`).
+ */
+export async function getPartners(): Promise<Partner[]> {
+  const base = getStrapiBaseUrl();
+  const url = strapiApiUrl("partners", PARTNERS_QUERY, base);
+
+  const res = await fetch(url, { headers: JSON_HEADERS });
+
+  if (!res.ok) {
+    console.error(`[strapi] getPartners failed: ${res.status} ${res.statusText}`);
+    return [];
+  }
+
+  const json = (await res.json()) as StrapiPartnersResponse;
+  const raw = Array.isArray(json.data) ? json.data : [];
+  const out: Partner[] = [];
+  for (const row of raw) {
+    const n = normalizePartner(row);
+    if (n) {
+      out.push(n);
+    }
+  }
+  return out;
+}
 
 /** Saca la primera URL de un campo Media (v4/v5) o undefined. */
 function pickStrapiMediaUrl(raw: StrapiSlide["image"]): string | undefined {
