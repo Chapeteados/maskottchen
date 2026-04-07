@@ -29,16 +29,18 @@ const vendors = [
       Busca el distribuidor más cercano y lleva Maskottchen a casa sin complicaciones.
     </p>
     <div
-      class="flex w-full flex-col items-center justify-center gap-8 md:flex-row md:items-start md:gap-6 lg:gap-8"
+      class="grid w-full grid-cols-1 items-start gap-8 md:grid-cols-[2fr_1fr_1fr] md:gap-6 lg:gap-8"
     >
       <img
         src="/map.webp"
         alt="Mapa de puntos de venta Maskottchen en Guadalajara"
-        class="w-full max-w-2xl shrink-0 object-contain md:max-h-[min(70vh,32rem)] md:min-h-0 md:min-w-0 md:flex-1"
+        class="w-full min-w-0 object-contain md:max-h-[min(70vh,32rem)]"
       />
-      <Partners client:load />
+      <div class="flex min-h-0 min-w-0 w-full justify-center md:justify-start">
+        <Partners client:load />
+      </div>
       <aside
-        class="flex w-full max-w-md shrink-0 flex-col items-center justify-center gap-8 md:min-w-0 md:max-w-none md:flex-1"
+        class="flex w-full min-w-0 flex-col items-center justify-center gap-8"
         aria-label="Comprar en línea"
       >
         {
