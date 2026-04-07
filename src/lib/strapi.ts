@@ -71,6 +71,12 @@ const HOME_PRODUCTS_QUERY =
   "&pagination[limit]=3" +
   "&sort[0]=createdAt:asc";
 
+/** Listado completo de productos (página productos + filtros). */
+const PRODUCTS_LIST_QUERY =
+  "populate[0]=presentations&populate[1]=gallery" +
+  "&pagination[pageSize]=100" +
+  "&sort[0]=name:asc";
+
 const PARTNERS_QUERY = "pagination[pageSize]=100&sort[0]=name:asc";
 
 function normalizePartner(row: StrapiPartner): Partner | null {
@@ -214,6 +220,24 @@ export async function getHomeProducts(): Promise<StrapiProduct[]> {
   const json = (await res.json()) as StrapiProductsResponse;
   const raw = Array.isArray(json.data) ? json.data : [];
   return raw.slice(0, HOME_PRODUCTS_LIMIT);
+}
+
+/**
+ * Todos los productos publicados (hasta 100), para `/productos` y filtros en cliente.
+ */
+export async function getProducts(): Promise<StrapiProduct[]> {
+  const base = getStrapiBaseUrl();
+  const url = strapiApiUrl("products", PRODUCTS_LIST_QUERY, base);
+
+  const res = await fetch(url, { headers: JSON_HEADERS });
+
+  if (!res.ok) {
+    console.error(`[strapi] getProducts failed: ${res.status} ${res.statusText}`);
+    return [];
+  }
+
+  const json = (await res.json()) as StrapiProductsResponse;
+  return Array.isArray(json.data) ? json.data : [];
 }
 
 function buildStrapiPostHeaders(): Record<string, string> {

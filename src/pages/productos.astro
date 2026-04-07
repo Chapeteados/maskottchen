@@ -1,0 +1,10 @@
+---
+import Products from "../components/products/Products";
+import ProductsHero from "../components/products/ProductsHero.astro";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <ProductsHero />
+  <Products client:load />
+</Layout>
