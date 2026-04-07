@@ -25,17 +25,12 @@ const panels = [
 ---
 
 <section
-  class="horizontal-accordion mx-auto flex w-full max-w-6xl gap-3 md:gap-4 md:min-h-[22rem] lg:min-h-[26rem] mb-16"
+  class="horizontal-accordion mx-auto mb-16 flex w-full max-w-6xl gap-3 md:gap-4 md:min-h-88 lg:min-h-104"
   aria-label="Información Maskottchen"
 >
   {
     panels.map((panel, i) => (
-      <AccordionPanel
-        bg={panel.bg}
-        panelIndex={i}
-        title={panel.title}
-        variant={panel.variant}
-      />
+      <AccordionPanel bg={panel.bg} panelIndex={i} title={panel.title} variant={panel.variant} />
     ))
   }
 </section>
