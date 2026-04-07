@@ -1,25 +1,52 @@
 ---
 import Partners from "./Partners";
+import OnlineVendor from "./OnlineVendor.astro";
+import { AMAZON_STORE_URL, MERCADO_LIBRE_STORE_URL } from "../../lib/constants";
+
+const vendors = [
+  {
+    logo: "/amazon.webp",
+    alt: "Amazon",
+    href: AMAZON_STORE_URL,
+  },
+  {
+    logo: "/ml.webp",
+    alt: "Mercado Libre",
+    href: MERCADO_LIBRE_STORE_URL,
+  },
+];
 ---
 
 <div
-  class="flex min-h-0 w-full flex-col items-center justify-center bg-cover bg-left bg-no-repeat md:h-auto md:flex-1"
+  class="flex min-h-0 w-full flex-col items-center justify-center bg-cover bg-top-left bg-no-repeat md:h-auto md:flex-1"
   style={`background-image: url(/footer.webp);`}
 >
   <div
-    class="flex flex-col items-center justify-center bg-[#D9D9D914] rounded-3xl p-8 max-w-6xl mx-auto gap-4 m-32 md:m-0"
+    class="m-32 mx-auto flex max-w-6xl flex-col items-center justify-center gap-4 rounded-3xl bg-[#D9D9D914] p-8 md:m-0"
   >
-    <h1 class="text-2xl font-bold text-white text-center">ENCUENTRA A MASKOTTCHEN CERCA DE TI</h1>
-    <p class="text-base text-white text-center">
+    <h1 class="text-center text-2xl font-bold text-white">ENCUENTRA A MASKOTTCHEN CERCA DE TI</h1>
+    <p class="text-center text-base text-white">
       Busca el distribuidor más cercano y lleva Maskottchen a casa sin complicaciones.
     </p>
-    <div class="flex w-full flex-col items-center justify-center gap-8 md:flex-row">
+    <div
+      class="flex w-full flex-col items-center justify-center gap-8 md:flex-row md:items-start md:gap-6 lg:gap-8"
+    >
       <img
         src="/map.webp"
-        alt="Map"
-        class="w-full max-w-2xl shrink-0 object-contain md:w-3/4 md:max-h-[min(70vh,32rem)]"
+        alt="Mapa de puntos de venta Maskottchen en Guadalajara"
+        class="w-full max-w-2xl shrink-0 object-contain md:max-h-[min(70vh,32rem)] md:min-h-0 md:min-w-0 md:flex-1"
       />
       <Partners client:load />
+      <aside
+        class="flex w-full max-w-md shrink-0 flex-col items-center justify-center gap-8 md:min-w-0 md:max-w-none md:flex-1"
+        aria-label="Comprar en línea"
+      >
+        {
+          vendors.map((vendor) => {
+            return <OnlineVendor logoSrc={vendor.logo} logoAlt={vendor.alt} href={vendor.href} />;
+          })
+        }
+      </aside>
     </div>
   </div>
 </div>

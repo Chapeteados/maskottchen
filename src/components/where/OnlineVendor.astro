@@ -1,0 +1,22 @@
+---
+import Button from "../Button.astro";
+
+interface Props {
+  logoSrc: string;
+  logoAlt: string;
+  href: string;
+  buttonLabel?: string;
+}
+
+const { logoSrc, logoAlt, href, buttonLabel = "COMPRAR" } = Astro.props;
+---
+
+<div class="flex w-full max-w-xs flex-col items-center gap-4">
+  <img src={logoSrc} alt={logoAlt} loading="lazy" width="200" />
+  <Button
+    href={href}
+    label={buttonLabel}
+    external
+    className="pointer-events-auto w-full max-w-xs text-center font-bold uppercase"
+  />
+</div>

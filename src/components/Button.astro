@@ -5,16 +5,21 @@ const {
   href,
   label,
   className = "",
+  external = false,
 } = Astro.props as {
   href: string;
   label: string;
   className?: string;
+  /** Abre en pestaña nueva y añade rel seguro (enlaces externos). */
+  external?: boolean;
 };
 ---
 
 <a
   href={href}
   class={`${primaryButtonLinkClass} ${className}`}
+  target={external ? "_blank" : undefined}
+  rel={external ? "noopener noreferrer" : undefined}
 >
   {label}
 </a>
