@@ -1,0 +1,79 @@
+---
+import AccordionPanel from "./AccordionPanel.astro";
+
+/**
+ * Acordeón horizontal: por defecto ~70% / ~15% / ~15% (flex-grow 14 : 3 : 3).
+ * Con hover en un panel: ese ~70%, los otros ~15% cada uno.
+ */
+const panels = [
+  {
+    bg: "/accordion1.webp",
+    title: "¿TIENES UNA CLÍNICA VETERINARIA?",
+    variant: "cta" as const,
+  },
+  {
+    bg: "/accordion2.webp",
+    title: "¿TIENES ALGUNA DUDA O COMENTARIO?",
+    variant: "contact" as const,
+  },
+  {
+    bg: "/accordion3.webp",
+    title: "Síguenos",
+    variant: "rrss" as const,
+  },
+];
+---
+
+<section
+  class="horizontal-accordion mx-auto flex w-full max-w-6xl gap-3 md:gap-4 md:min-h-[22rem] lg:min-h-[26rem] mb-16"
+  aria-label="Información Maskottchen"
+>
+  {
+    panels.map((panel, i) => (
+      <AccordionPanel
+        bg={panel.bg}
+        panelIndex={i}
+        title={panel.title}
+        variant={panel.variant}
+      />
+    ))
+  }
+</section>
+
+<style is:global>
+  /* article.panel viene de AccordionPanel; is:global evita que el scope de Astro rompa estos selectores. */
+  .horizontal-accordion {
+    --accordion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .horizontal-accordion .panel {
+      transition: none;
+    }
+  }
+
+  .horizontal-accordion .panel {
+    flex: 3 1 0;
+    min-width: 0;
+    transition:
+      flex-grow 500ms var(--accordion-ease),
+      opacity 500ms var(--accordion-ease);
+  }
+
+  .horizontal-accordion:not(:hover) .panel:not(:first-child),
+  .horizontal-accordion:hover:has(.panel:hover) .panel:not(:hover) {
+    opacity: 0.5;
+  }
+
+  .horizontal-accordion:not(:hover) .panel:first-child {
+    flex-grow: 14;
+  }
+
+  .horizontal-accordion:hover .panel {
+    flex-grow: 3;
+  }
+
+  .horizontal-accordion:hover .panel:hover {
+    flex-grow: 14;
+  }
+</style>

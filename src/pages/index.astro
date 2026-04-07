@@ -3,6 +3,7 @@ import HeroSlider from "../components/home/HeroSlider.tsx";
 import Products from "../components/home/Products.tsx";
 import Attributes from "../components/home/Attributes.astro";
 import Why from "../components/home/Why.astro";
+import Accordion from "../components/home/Accordion.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
@@ -10,5 +11,7 @@ import Layout from "../layouts/Layout.astro";
   <HeroSlider client:only="react" />
   <Attributes />
   <Why />
+
   <Products client:only="react" />
+  <Accordion />
 </Layout>
