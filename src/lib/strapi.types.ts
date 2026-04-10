@@ -45,6 +45,9 @@ export type StrapiPartner = {
   name: string | null;
   address: string | null;
   phone: string | null;
+  /** WGS84; opcional en Strapi. */
+  latitude?: number | string | null;
+  longitude?: number | string | null;
 };
 
 export type StrapiPartnersResponse = {
@@ -59,6 +62,8 @@ export type Partner = {
   name: string;
   address: string;
   phone: string;
+  latitude?: number;
+  longitude?: number;
 };
 
 /** Media (imagen) en respuestas REST de Strapi v4/v5. */

@@ -79,18 +79,33 @@ const PRODUCTS_LIST_QUERY =
 
 const PARTNERS_QUERY = "pagination[pageSize]=100&sort[0]=name:asc";
 
+function optionalFiniteNumber(v: unknown): number | undefined {
+  if (v == null) return undefined;
+  if (typeof v === "number" && Number.isFinite(v)) return v;
+  if (typeof v === "string" && v.trim() !== "") {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : undefined;
+  }
+  return undefined;
+}
+
 function normalizePartner(row: StrapiPartner): Partner | null {
   const name = row.name?.trim();
   if (!name) {
     return null;
   }
-  return {
+  const lat = optionalFiniteNumber(row.latitude);
+  const lng = optionalFiniteNumber(row.longitude);
+  const out: Partner = {
     id: row.id,
     documentId: row.documentId,
     name,
     address: row.address?.trim() ?? "",
     phone: row.phone?.trim() ?? "",
   };
+  if (lat !== undefined) out.latitude = lat;
+  if (lng !== undefined) out.longitude = lng;
+  return out;
 }
 
 /**

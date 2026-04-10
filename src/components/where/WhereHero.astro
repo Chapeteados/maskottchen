@@ -1,6 +1,6 @@
 ---
-import Partners from "./Partners";
 import OnlineVendor from "./OnlineVendor.astro";
+import WherePartnersMap from "./WherePartnersMap";
 import { AMAZON_STORE_URL, MERCADO_LIBRE_STORE_URL } from "../../lib/constants";
 
 const vendors = [
@@ -31,14 +31,7 @@ const vendors = [
     <div
       class="grid w-full grid-cols-1 items-start gap-8 md:grid-cols-[2fr_1fr_1fr] md:gap-6 lg:gap-8"
     >
-      <img
-        src="/map.webp"
-        alt="Mapa de puntos de venta Maskottchen en Guadalajara"
-        class="w-full min-w-0 object-contain md:max-h-[min(70vh,32rem)]"
-      />
-      <div class="flex min-h-0 min-w-0 w-full justify-center md:justify-start">
-        <Partners client:load />
-      </div>
+      <WherePartnersMap client:load />
       <aside
         class="flex w-full min-w-0 flex-col items-center justify-center gap-8"
         aria-label="Comprar en línea"

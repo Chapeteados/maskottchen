@@ -1,18 +1,46 @@
 import type { Partner } from "../../lib/strapi.types";
 
-const PartnerCard = ({ partner }: { partner: Partner }) => {
-  const { name, address, phone } = partner;
-  return (
-    <div>
-      <div className="flex flex-col items-center justify-center gap-2 border border-[#FFED00] rounded-t-2xl px-4 py-2 max-w-lg">
-        <h2 className="text-2xl font-bold text-[#D9B668] text-center uppercase">{name}</h2>
-        <p className="text-base text-white text-center">{address}</p>
+type PartnerCardProps = {
+  partner: Partner;
+  selected?: boolean;
+  onSelect?: () => void;
+};
+
+const PartnerCard = ({ partner, selected = false, onSelect }: PartnerCardProps) => {
+  const { name, address } = partner;
+  const interactive = typeof onSelect === "function";
+
+  const shell = (
+    <>
+      <div
+        className={`flex max-w-lg flex-col items-center justify-center gap-2 rounded-t-2xl border px-4 py-2 ${
+          selected ? "border-[#FFED00] ring-2 ring-[#FFED00]/60 ring-offset-2 ring-offset-transparent" : "border-[#FFED00]"
+        }`}
+      >
+        <h2 className="text-center text-2xl font-bold uppercase text-[#D9B668]">{name}</h2>
+        <p className="text-center text-base text-white">{address}</p>
       </div>
-      <div className="border border-[#FFED00] rounded-b-2xl max-w-lg w-full px-4 py-2 text-center font-bold uppercase text-white">
+      <div className="w-full max-w-lg rounded-b-2xl border border-[#FFED00] px-4 py-2 text-center font-bold uppercase text-white">
         Llamar
       </div>
-    </div>
+    </>
   );
+
+  if (interactive) {
+    return (
+      <button
+        type="button"
+        onClick={onSelect}
+        className="block w-full max-w-lg cursor-pointer text-left outline-none focus-visible:ring-2 focus-visible:ring-[#FFED00] focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+        aria-pressed={selected}
+        aria-label={`Ver ${name} en el mapa`}
+      >
+        {shell}
+      </button>
+    );
+  }
+
+  return <div>{shell}</div>;
 };
 
 export default PartnerCard;
