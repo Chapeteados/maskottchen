@@ -3,6 +3,8 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
+import { googleMapsDirectionsUrl } from "../../lib/googleMaps";
+
 /** Iconos por defecto de Leaflet en bundlers (Vite). Solo aplica si no hay `markerIcon`. */
 const fixLeafletIcons = () => {
   delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: string })._getIconUrl;
@@ -82,10 +84,12 @@ function coordsFromProps(latitude?: number, longitude?: number): [number, number
 function LeafletMapView(props: {
   position: [number, number];
   popupText: string;
+  /** Dirección para «Cómo llegar»; si existe, el enlace prioriza el texto sobre las coordenadas. */
+  directionsAddress?: string;
   className: string;
   markerIcon?: MapMarkerIconConfig;
 }) {
-  const { position, popupText, className, markerIcon } = props;
+  const { position, popupText, directionsAddress, className, markerIcon } = props;
   const leafletIcon = useMemo(
     () => (markerIcon ? createLeafletIcon(markerIcon) : undefined),
     [markerIcon],
@@ -106,7 +110,23 @@ function LeafletMapView(props: {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker position={position} {...(leafletIcon ? { icon: leafletIcon } : {})}>
-          <Popup>{popupText}</Popup>
+          <Popup>
+            <div className="min-w-48 text-sm text-neutral-800">
+              {popupText ? <p className="mb-2 leading-snug">{popupText}</p> : null}
+              <a
+                href={googleMapsDirectionsUrl({
+                  latitude: position[0],
+                  longitude: position[1],
+                  address: directionsAddress,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-blue-800 underline decoration-blue-800/50 underline-offset-2 hover:text-blue-950"
+              >
+                Cómo llegar
+              </a>
+            </div>
+          </Popup>
         </Marker>
       </MapContainer>
     </div>
@@ -167,6 +187,7 @@ export default function OsmAddressMap({
       <LeafletMapView
         position={fixed}
         popupText={popupText}
+        directionsAddress={address.trim() || undefined}
         className={className}
         markerIcon={markerIcon}
       />
@@ -200,6 +221,7 @@ export default function OsmAddressMap({
     <LeafletMapView
       position={position}
       popupText={address.trim()}
+      directionsAddress={address.trim() || undefined}
       className={className}
       markerIcon={markerIcon}
     />
