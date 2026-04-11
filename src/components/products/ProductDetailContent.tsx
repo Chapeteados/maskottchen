@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ctaClass =
   "inline-flex w-full max-w-md items-center justify-center rounded-lg bg-[#FBDF00] px-8 py-3 text-base font-semibold text-black shadow-md transition hover:bg-yellow-300 hover:shadow-lg md:text-lg";
@@ -25,14 +25,30 @@ export default function ProductDetailContent({
 }: ProductDetailContentProps) {
   const [mainIndex, setMainIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const pendingIndex = useRef<number | null>(null);
+
+  const switchTo = (i: number) => {
+    if (i === mainIndex) return;
+    pendingIndex.current = i;
+    setVisible(false);
+  };
+
+  const handleTransitionEnd = () => {
+    if (!visible && pendingIndex.current !== null) {
+      setMainIndex(pendingIndex.current);
+      pendingIndex.current = null;
+      setVisible(true);
+    }
+  };
 
   useEffect(() => {
     if (gallery.length <= 1 || paused) return;
     const id = setInterval(() => {
-      setMainIndex((i) => (i + 1) % gallery.length);
-    }, 2000);
+      switchTo((mainIndex + 1) % gallery.length);
+    }, 4000);
     return () => clearInterval(id);
-  }, [gallery.length, paused]);
+  }, [gallery.length, paused, mainIndex]);
 
   const main = gallery[mainIndex];
 
@@ -51,7 +67,8 @@ export default function ProductDetailContent({
               <img
                 src={main.url}
                 alt={main.alternativeText ?? name}
-                className="max-h-[min(55vh,420px)] w-full object-contain"
+                onTransitionEnd={handleTransitionEnd}
+                className={`max-h-[min(55vh,420px)] w-full object-contain transition-opacity duration-500 ${visible ? "opacity-100" : "opacity-0"}`}
                 width={main.width}
                 height={main.height}
               />
@@ -66,7 +83,10 @@ export default function ProductDetailContent({
                 <li key={`${img.url}-${i}`}>
                   <button
                     type="button"
-                    onClick={() => { setMainIndex(i); setPaused(true); }}
+                    onClick={() => {
+                      switchTo(i);
+                      setPaused(true);
+                    }}
                     className={`rounded-xl border-2 bg-white p-2 transition hover:opacity-95 ${
                       i === mainIndex
                         ? "border-[#FBDF00] ring-2 ring-[#FBDF00]/50"
