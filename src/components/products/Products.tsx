@@ -51,8 +51,20 @@ export default function Products() {
   };
 
   return (
-    <section className="bg-white px-4 py-12 md:px-8 md:py-16">
-      <div className="mx-auto max-w-6xl">
+    <section className="relative overflow-hidden bg-white px-4 py-12 md:px-8 md:py-16">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <img
+          src="/paw.webp"
+          alt=""
+          className="absolute -right-20 top-10 w-52 rotate-25 opacity-25 md:w-72"
+        />
+        <img
+          src="/paw.webp"
+          alt=""
+          className="absolute -left-16 bottom-10 w-44 rotate-[-15deg] opacity-25 md:w-60"
+        />
+      </div>
+      <div className="relative mx-auto max-w-6xl">
         <ProductFilters
           etapa={etapa}
           tamaño={tamaño}
@@ -90,5 +102,6 @@ export default function Products() {
         </div>
       </div>
     </section>
+
   );
 }
