@@ -36,18 +36,47 @@ export default function ProductDetailContent({
       </header>
 
       <div className="grid gap-10 md:grid-cols-2 md:items-start md:gap-12 lg:gap-16">
-        <div className="flex min-h-[280px] items-center justify-center rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-sm md:min-h-[360px] md:p-10">
-          {main ? (
-            <img
-              src={main.url}
-              alt={main.alternativeText ?? name}
-              className="max-h-[min(55vh,420px)] w-full object-contain"
-              width={main.width}
-              height={main.height}
-            />
-          ) : (
-            <span className="text-sm text-neutral-400">Sin imagen</span>
-          )}
+        <div className="flex flex-col gap-4">
+          <div className="flex min-h-[280px] items-center justify-center rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-sm md:min-h-[360px] md:p-10">
+            {main ? (
+              <img
+                src={main.url}
+                alt={main.alternativeText ?? name}
+                className="max-h-[min(55vh,420px)] w-full object-contain"
+                width={main.width}
+                height={main.height}
+              />
+            ) : (
+              <span className="text-sm text-neutral-400">Sin imagen</span>
+            )}
+          </div>
+
+          {gallery.length > 1 ? (
+            <ul className="flex flex-wrap justify-center gap-3 md:justify-start">
+              {gallery.map((img, i) => (
+                <li key={`${img.url}-${i}`}>
+                  <button
+                    type="button"
+                    onClick={() => setMainIndex(i)}
+                    className={`rounded-xl border-2 bg-white p-2 transition hover:opacity-95 ${
+                      i === mainIndex
+                        ? "border-[#FBDF00] ring-2 ring-[#FBDF00]/50"
+                        : "border-neutral-200 hover:border-[#FBDF00]/60"
+                    }`}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.alternativeText ?? `${name} — miniatura ${i + 1}`}
+                      className="h-20 w-20 object-contain md:h-24 md:w-24"
+                      width={img.width}
+                      height={img.height}
+                      loading="lazy"
+                    />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
 
         <div className="flex flex-col gap-6 text-black">
@@ -80,33 +109,6 @@ export default function ProductDetailContent({
           </div>
         </div>
       </div>
-
-      {gallery.length > 1 ? (
-        <ul className="flex flex-wrap justify-center gap-4 md:justify-start">
-          {gallery.map((img, i) => (
-            <li key={`${img.url}-${i}`}>
-              <button
-                type="button"
-                onClick={() => setMainIndex(i)}
-                className={`rounded-xl border-2 bg-white p-2 transition hover:opacity-95 ${
-                  i === mainIndex
-                    ? "border-[#FBDF00] ring-2 ring-[#FBDF00]/50"
-                    : "border-neutral-200 hover:border-[#FBDF00]/60"
-                }`}
-              >
-                <img
-                  src={img.url}
-                  alt={img.alternativeText ?? `${name} — miniatura ${i + 1}`}
-                  className="h-20 w-20 object-contain md:h-24 md:w-24"
-                  width={img.width}
-                  height={img.height}
-                  loading="lazy"
-                />
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : null}
     </div>
   );
 }
