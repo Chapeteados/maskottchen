@@ -48,13 +48,15 @@ export default function ProductDetailPage() {
     );
   }
 
-  const gallery = (product.gallery ?? []).map((img) => ({
+  const mapImage = (img: { url: string; alternativeText: string | null; width: number; height: number }) => ({
     url: img.url,
     alternativeText: img.alternativeText,
     width: img.width,
     height: img.height,
-  }));
+  });
 
+  const gallery = (product.gallery ?? []).map(mapImage);
+  const infoImages = (product.info ?? []).map(mapImage);
   const presentations = (product.presentations ?? []).map((p) => ({
     documentId: p.documentId,
     name: p.name,
@@ -66,6 +68,7 @@ export default function ProductDetailPage() {
       description={product.description ?? ""}
       presentations={presentations}
       gallery={gallery}
+      infoImages={infoImages}
     />
   );
 }

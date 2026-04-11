@@ -3,24 +3,108 @@ import { useEffect, useRef, useState } from "react";
 const ctaClass =
   "inline-flex w-full max-w-md items-center justify-center rounded-lg bg-[#FBDF00] px-8 py-3 text-base font-semibold text-black shadow-md transition hover:bg-yellow-300 hover:shadow-lg md:text-lg";
 
+type ImageItem = {
+  url: string;
+  alternativeText: string | null;
+  width: number;
+  height: number;
+};
+
 export type ProductDetailContentProps = {
   name: string;
   description: string;
   presentations: Array<{ documentId: string; name: string }>;
-  gallery: Array<{
-    url: string;
-    alternativeText: string | null;
-    width: number;
-    height: number;
-  }>;
+  gallery: ImageItem[];
+  infoImages?: ImageItem[];
   dondeComprarHref?: string;
 };
+
+function InfoCarousel({ images, name }: { images: ImageItem[]; name: string }) {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+  const pending = useRef<number | null>(null);
+
+  const goTo = (i: number) => {
+    if (i === index) return;
+    pending.current = i;
+    setVisible(false);
+  };
+
+  const onTransitionEnd = () => {
+    if (!visible && pending.current !== null) {
+      setIndex(pending.current);
+      pending.current = null;
+      setVisible(true);
+    }
+  };
+
+  const prev = () => goTo((index - 1 + images.length) % images.length);
+  const next = () => goTo((index + 1) % images.length);
+
+  const current = images[index];
+  if (!current) return null;
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="relative flex items-center justify-center gap-2">
+        {images.length > 1 ? (
+          <button
+            type="button"
+            aria-label="Imagen anterior"
+            onClick={prev}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-lg text-neutral-600 shadow-sm transition hover:bg-neutral-50"
+          >
+            ‹
+          </button>
+        ) : null}
+
+        <div className="flex min-h-[220px] flex-1 items-center justify-center overflow-hidden rounded-2xl border border-neutral-200/80 bg-white p-4 shadow-sm md:min-h-[260px] md:p-6">
+          <img
+            src={current.url}
+            alt={current.alternativeText ?? `${name} — info ${index + 1}`}
+            onTransitionEnd={onTransitionEnd}
+            className={`max-h-[300px] w-full object-contain transition-opacity duration-500 ${visible ? "opacity-100" : "opacity-0"}`}
+            width={current.width}
+            height={current.height}
+          />
+        </div>
+
+        {images.length > 1 ? (
+          <button
+            type="button"
+            aria-label="Imagen siguiente"
+            onClick={next}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-lg text-neutral-600 shadow-sm transition hover:bg-neutral-50"
+          >
+            ›
+          </button>
+        ) : null}
+      </div>
+
+      {images.length > 1 ? (
+        <div className="flex justify-center gap-1.5">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Info ${i + 1}`}
+              aria-current={i === index ? "true" : undefined}
+              onClick={() => goTo(i)}
+              className={`h-2 w-2 rounded-full transition ${i === index ? "bg-[#FBDF00]" : "bg-neutral-300 hover:bg-neutral-400"}`}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 export default function ProductDetailContent({
   name,
   description,
   presentations,
   gallery,
+  infoImages = [],
   dondeComprarHref = "/donde-comprar",
 }: ProductDetailContentProps) {
   const [mainIndex, setMainIndex] = useState(0);
@@ -136,6 +220,10 @@ export default function ProductDetailContent({
               DÓNDE COMPRAR
             </a>
           </div>
+
+          {infoImages.length > 0 ? (
+            <InfoCarousel images={infoImages} name={name} />
+          ) : null}
         </div>
       </div>
     </div>

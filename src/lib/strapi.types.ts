@@ -31,6 +31,8 @@ export type StrapiProduct = {
   description: string;
   presentations: StrapiPresentation[];
   gallery: StrapiGalleryImage[];
+  /** Imágenes informativas del producto (campo `info` en Strapi). */
+  info?: StrapiGalleryImage[];
 };
 
 export type StrapiProductsResponse = {

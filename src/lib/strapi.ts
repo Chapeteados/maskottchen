@@ -53,9 +53,7 @@ export function strapiApiUrl(path: string, searchParams?: string, baseUrl?: stri
   const base = (baseUrl ?? getStrapiBaseUrl()).replace(/\/$/, "");
   const segment = path.trim().replace(/^\/+|\/+$/g, "");
   const qs =
-    searchParams != null && searchParams.length > 0
-      ? `?${searchParams.replace(/^\?/, "")}`
-      : "";
+    searchParams != null && searchParams.length > 0 ? `?${searchParams.replace(/^\?/, "")}` : "";
   return `${base}/api/${segment}${qs}`;
 }
 
@@ -73,7 +71,7 @@ const HOME_PRODUCTS_QUERY =
 
 /** Listado completo de productos (página productos + filtros). */
 const PRODUCTS_LIST_QUERY =
-  "populate[0]=presentations&populate[1]=gallery" +
+  "populate[0]=presentations&populate[1]=gallery&populate[2]=info" +
   "&pagination[pageSize]=100" +
   "&sort[0]=name:asc";
 
@@ -242,7 +240,7 @@ export async function getHomeProducts(): Promise<StrapiProduct[]> {
  */
 export async function getProduct(documentId: string): Promise<StrapiProduct | null> {
   const base = getStrapiBaseUrl();
-  const query = "populate[0]=presentations&populate[1]=gallery";
+  const query = "populate[0]=presentations&populate[1]=gallery&populate[2]=info";
   const url = strapiApiUrl(`products/${encodeURIComponent(documentId)}`, query, base);
 
   const res = await fetch(url, { headers: JSON_HEADERS });
@@ -286,7 +284,7 @@ function buildStrapiPostHeaders(): Record<string, string> {
  */
 export async function postStrapi(
   path: string,
-  fields: Record<string, unknown>,
+  fields: Record<string, unknown>
 ): Promise<StrapiPostResult> {
   const url = strapiApiUrl(path);
 
