@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ctaClass =
   "inline-flex w-full max-w-md items-center justify-center rounded-lg bg-[#FBDF00] px-8 py-3 text-base font-semibold text-black shadow-md transition hover:bg-yellow-300 hover:shadow-lg md:text-lg";
@@ -24,6 +24,15 @@ export default function ProductDetailContent({
   dondeComprarHref = "/donde-comprar",
 }: ProductDetailContentProps) {
   const [mainIndex, setMainIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (gallery.length <= 1 || paused) return;
+    const id = setInterval(() => {
+      setMainIndex((i) => (i + 1) % gallery.length);
+    }, 2000);
+    return () => clearInterval(id);
+  }, [gallery.length, paused]);
 
   const main = gallery[mainIndex];
 
@@ -57,7 +66,7 @@ export default function ProductDetailContent({
                 <li key={`${img.url}-${i}`}>
                   <button
                     type="button"
-                    onClick={() => setMainIndex(i)}
+                    onClick={() => { setMainIndex(i); setPaused(true); }}
                     className={`rounded-xl border-2 bg-white p-2 transition hover:opacity-95 ${
                       i === mainIndex
                         ? "border-[#FBDF00] ring-2 ring-[#FBDF00]/50"
