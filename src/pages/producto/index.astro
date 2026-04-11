@@ -1,0 +1,29 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ProductDetailPage from "../../components/products/ProductDetailPage";
+---
+
+<Layout title="Producto">
+  <div class="relative isolate min-h-0 overflow-hidden bg-white">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="absolute -left-20 top-24 h-72 w-72 rounded-full bg-[#FBDF00]/12 blur-3xl"></div>
+      <div class="absolute -right-16 bottom-32 h-80 w-80 rounded-full bg-[#FBDF00]/10 blur-3xl">
+      </div>
+      <div class="absolute right-[15%] top-[35%] h-48 w-48 rounded-full bg-[#FBDF00]/8 blur-2xl">
+      </div>
+    </div>
+
+    <article class="relative z-10 mx-auto max-w-6xl px-4 py-10 md:px-8 md:py-14">
+      <p class="mb-8 mt-8 md:mb-10 md:mt-16">
+        <a
+          href="/productos"
+          class="text-sm font-medium text-neutral-600 underline decoration-neutral-400/80 underline-offset-2 hover:text-black"
+        >
+          ← Volver a productos
+        </a>
+      </p>
+
+      <ProductDetailPage client:only="react" />
+    </article>
+  </div>
+</Layout>

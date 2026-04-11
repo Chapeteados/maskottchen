@@ -238,6 +238,25 @@ export async function getHomeProducts(): Promise<StrapiProduct[]> {
 }
 
 /**
+ * Producto individual por `documentId`. Devuelve `null` si no existe o hay error.
+ */
+export async function getProduct(documentId: string): Promise<StrapiProduct | null> {
+  const base = getStrapiBaseUrl();
+  const query = "populate[0]=presentations&populate[1]=gallery";
+  const url = strapiApiUrl(`products/${encodeURIComponent(documentId)}`, query, base);
+
+  const res = await fetch(url, { headers: JSON_HEADERS });
+
+  if (!res.ok) {
+    console.error(`[strapi] getProduct(${documentId}) failed: ${res.status}`);
+    return null;
+  }
+
+  const json = (await res.json()) as { data: StrapiProduct };
+  return json.data ?? null;
+}
+
+/**
  * Todos los productos publicados (hasta 100), para `/productos` y filtros en cliente.
  */
 export async function getProducts(): Promise<StrapiProduct[]> {

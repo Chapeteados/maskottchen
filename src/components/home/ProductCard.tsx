@@ -6,9 +6,14 @@ const buttonClass =
 type ProductCardProps = {
   product: StrapiProduct;
   ctaHref?: string;
+  ctaLabel?: string;
 };
 
-export function ProductCard({ product, ctaHref = "/donde-comprar" }: ProductCardProps) {
+export function ProductCard({
+  product,
+  ctaHref = "/donde-comprar",
+  ctaLabel = "DÓNDE COMPRAR",
+}: ProductCardProps) {
   const imageUrl = product.gallery?.[0]?.url ?? null;
   const firstImage = product.gallery?.[0];
 
@@ -37,7 +42,7 @@ export function ProductCard({ product, ctaHref = "/donde-comprar" }: ProductCard
         </h3>
         <div className="mt-auto w-full flex justify-center pt-4">
           <a href={ctaHref} className={buttonClass}>
-            DÓNDE COMPRAR
+            {ctaLabel}
           </a>
         </div>
       </div>

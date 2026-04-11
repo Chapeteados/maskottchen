@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { getProducts, type StrapiProduct } from "../../lib/strapi";
 import { buildProductFilterOptions, productMatchesFilters } from "../../lib/productFilter";
+import { productDetailPath } from "../../lib/productRoutes";
 import { useAsyncResource } from "../../hooks/useAsyncResource";
 
 import { ProductCard } from "../home/ProductCard";
@@ -77,7 +78,12 @@ export default function Products() {
           ) : (
             <ul className="grid items-stretch gap-8 md:grid-cols-2 md:gap-10 lg:grid-cols-3">
               {filtered.map((product) => (
-                <ProductCard key={product.documentId ?? product.id} product={product} />
+                <ProductCard
+                  key={product.documentId ?? product.id}
+                  product={product}
+                  ctaHref={productDetailPath(product.documentId)}
+                  ctaLabel="Ver producto"
+                />
               ))}
             </ul>
           )}
