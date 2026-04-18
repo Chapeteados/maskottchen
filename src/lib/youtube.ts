@@ -28,6 +28,7 @@ export function getYoutubeEmbedUrlFromInput(input: string): string | null {
     rel: "0",
     loop: "1",
     playlist: id,
+    enablejsapi: "1",
   });
   return `https://www.youtube.com/embed/${id}?${params.toString()}`;
 }

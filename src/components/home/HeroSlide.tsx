@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { HomeHeroSlide } from "../../lib/strapi.types";
 import { getYoutubeEmbedUrlFromInput } from "../../lib/youtube";
 
@@ -11,6 +12,7 @@ type HeroSlideProps = {
 };
 
 export function HeroSlide({ slide, isActive, arcId }: HeroSlideProps) {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const { image, youtubeUrl, title, description, buttonLabel, buttonHref } = slide;
 
   const youtubeEmbedSrc = youtubeUrl ? getYoutubeEmbedUrlFromInput(youtubeUrl) : null;
@@ -18,6 +20,31 @@ export function HeroSlide({ slide, isActive, arcId }: HeroSlideProps) {
   const iframeSrc = isActive && youtubeEmbedSrc ? youtubeEmbedSrc : "about:blank";
 
   const hasTitleOrDescription = Boolean(title?.trim() || description?.trim());
+
+  useEffect(() => {
+    if (!isActive || !hasYoutube || !iframeRef.current) return;
+
+    const post = (payload: { event: string; func: string; args: unknown[] }) => {
+      iframeRef.current?.contentWindow?.postMessage(JSON.stringify(payload), "*");
+    };
+
+    const onMessage = (event: MessageEvent) => {
+      if (!iframeRef.current?.src || !String(event.origin).includes("youtube")) return;
+      let data = event.data;
+      if (typeof data === "string") {
+        try { data = JSON.parse(data); } catch { return; }
+      }
+      if (data?.event === "onStateChange" && data?.info === 0) {
+        post({ event: "command", func: "seekTo", args: [0, true] });
+        post({ event: "command", func: "playVideo", args: [] });
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+    post({ event: "command", func: "addEventListener", args: ["onStateChange"] });
+
+    return () => window.removeEventListener("message", onMessage);
+  }, [hasYoutube, isActive, iframeSrc]);
 
   return (
     <div
@@ -27,13 +54,16 @@ export function HeroSlide({ slide, isActive, arcId }: HeroSlideProps) {
       style={!hasYoutube && image ? { backgroundImage: `url(${image})` } : undefined}
     >
       {hasYoutube && youtubeEmbedSrc ? (
-        <iframe
-          className="youtube-iframe pointer-events-none absolute inset-0 h-full w-full border-0"
-          src={iframeSrc}
-          title="Video de YouTube"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <iframe
+            ref={iframeRef}
+            className="youtube-iframe absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-screen min-w-[177.78vh] -translate-x-1/2 -translate-y-1/2 border-0"
+            src={iframeSrc}
+            title="Video de YouTube"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
       ) : null}
 
       {!hasTitleOrDescription ? (

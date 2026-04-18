@@ -35,7 +35,7 @@ export default function HeroSlider() {
   if (loading) {
     return (
       <section
-        className="relative h-[100dvh] md:h-[100vh] overflow-hidden bg-neutral-200 animate-pulse"
+        className="relative h-[60dvh] md:h-screen overflow-hidden bg-neutral-200 animate-pulse"
         id="hero-slider"
         aria-busy="true"
         aria-label="Cargando carrusel"
@@ -48,7 +48,7 @@ export default function HeroSlider() {
   }
 
   return (
-    <section className="relative h-[100dvh] md:h-[100vh] overflow-hidden" id="hero-slider">
+    <section className="relative h-dvh md:h-screen overflow-hidden" id="hero-slider">
       <div className="relative h-full w-full">
         {slides.map((slide, index) => (
           <div
