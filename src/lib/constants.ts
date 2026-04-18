@@ -5,6 +5,7 @@ export const STRAPI_BASE_URL_PROD = "https://maskottchen-be-production.up.railwa
 /** Enlaces a redes (https absolutas). Dejar `""` para ocultar o usar `#` desde el componente. */
 export const FACEBOOK_URL = "https://www.facebook.com/Maskottchen.petfood";
 export const INSTAGRAM_URL = "";
+export const TIKTOK_URL = "";
 
 /** Tiendas online (producto o búsqueda). Sustituir por URLs definitivas de Maskottchen. */
 export const AMAZON_STORE_URL = "https://www.amazon.com.mx/s?k=maskottchen";

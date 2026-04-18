@@ -1,8 +1,9 @@
 ---
-import { FACEBOOK_URL, INSTAGRAM_URL } from "../lib/constants";
+import { FACEBOOK_URL, INSTAGRAM_URL, TIKTOK_URL } from "../lib/constants";
 
 const facebookUrl = FACEBOOK_URL;
 const instagramUrl = INSTAGRAM_URL;
+const tiktokUrl = TIKTOK_URL;
 
 const {
   linkClass = "inline-flex text-white transition hover:opacity-80",
@@ -33,5 +34,16 @@ const {
     aria-label="Instagram"
   >
     <img src="/icons/instagram.svg" alt="" width="28" height="28" class={iconClass} />
+  </a>
+</li>
+<li>
+  <a
+    href={tiktokUrl || "#"}
+    target="_blank"
+    rel="noopener noreferrer"
+    class={linkClass}
+    aria-label="TikTok"
+  >
+    <img src="/icons/tiktok.svg" alt="" width="28" height="28" class={iconClass} />
   </a>
 </li>

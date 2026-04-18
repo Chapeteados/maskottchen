@@ -25,7 +25,7 @@ const panels = [
 ---
 
 <section
-  class="horizontal-accordion mx-auto mb-16 flex w-full max-w-6xl gap-3 md:gap-4 md:min-h-88 lg:min-h-104"
+  class="horizontal-accordion mx-auto mb-16 flex w-full max-w-6xl flex-col gap-3 md:min-h-88 md:flex-row md:gap-4 lg:min-h-104"
   aria-label="Información Maskottchen"
 >
   {
@@ -53,6 +53,14 @@ const panels = [
     transition:
       flex-grow 500ms var(--accordion-ease),
       opacity 500ms var(--accordion-ease);
+  }
+
+  @media (max-width: 767px) {
+    .horizontal-accordion .panel {
+      flex: none;
+      width: 100%;
+      opacity: 1 !important;
+    }
   }
 
   .horizontal-accordion:not(:hover) .panel:not(:first-child),
