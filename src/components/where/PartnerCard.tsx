@@ -7,7 +7,7 @@ type PartnerCardProps = {
 };
 
 const PartnerCard = ({ partner, selected = false, onSelect }: PartnerCardProps) => {
-  const { name, address } = partner;
+  const { name, address, phone } = partner;
   const interactive = typeof onSelect === "function";
 
   const shell = (
@@ -20,9 +20,13 @@ const PartnerCard = ({ partner, selected = false, onSelect }: PartnerCardProps) 
         <h2 className="text-center text-2xl font-bold uppercase text-[#D9B668]">{name}</h2>
         <p className="text-center text-base text-white">{address}</p>
       </div>
-      <div className="w-full max-w-lg rounded-b-2xl border border-[#FFED00] px-4 py-2 text-center font-bold uppercase text-white">
+      <a
+        href={`tel:${phone}`}
+        onClick={(e) => e.stopPropagation()}
+        className="block w-full max-w-lg rounded-b-2xl border border-[#FFED00] px-4 py-2 text-center font-bold uppercase text-white"
+      >
         Llamar
-      </div>
+      </a>
     </>
   );
 
