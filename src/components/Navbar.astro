@@ -13,7 +13,7 @@ import SocialLinks from "./SocialLinks.astro";
     </button>
   </div>
 
-  <ul class="flex items-center gap-4 md:flex hidden">
+  <ul class="items-center gap-4 md:flex hidden">
     <NavLinks
       itemClass="text-white font-bold [text-shadow:0_4px_4px_rgba(0,0,0,0.25)]"
       activeClass="!text-black font-extrabold"
@@ -22,7 +22,7 @@ import SocialLinks from "./SocialLinks.astro";
   </ul>
   <ul
     id="mobile-menu"
-    class="flex flex-col gap-4 hidden md:hidden absolute left-0 top-full w-full bg-[#D9D9D980] p-4"
+    class="flex flex-col gap-4 md:hidden absolute left-0 top-full w-full bg-[#D9D9D980] p-4"
   >
     <NavLinks itemClass="text-white font-bold" activeClass="!text-black font-extrabold" />
   </ul>
