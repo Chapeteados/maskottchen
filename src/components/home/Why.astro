@@ -1,10 +1,13 @@
 ---
 import Button from "../Button.astro";
+import ScrollReveal from "../ScrollReveal.astro";
 ---
 
 <div class="relative flex flex-col md:flex-row items-center justify-center gap-16 p-16">
-  <img src="/why.webp" alt="Why" class="w-full h-full object-cover max-w-full md:max-w-1/2" />
-  <div class="relative flex flex-col items-center justify-center gap-8">
+  <ScrollReveal variant="fade-left" class="w-full md:max-w-1/2">
+    <img src="/why.webp" alt="Why" class="w-full h-full object-cover max-w-full" />
+  </ScrollReveal>
+  <ScrollReveal variant="fade-right" delay={100} class="relative flex flex-col items-center justify-center gap-8">
     <img
       src="/paw.webp"
       alt=""
@@ -38,5 +41,5 @@ import Button from "../Button.astro";
       En Maskottchen cuidamos la calidad <br />y su nutrición como parte de la familia.
     </p>
     <Button label="Conoce más" href="/nosotros" />
-  </div>
+  </ScrollReveal>
 </div>

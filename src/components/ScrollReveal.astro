@@ -1,0 +1,18 @@
+---
+interface Props {
+  variant?: "fade-up" | "fade-in" | "fade-left" | "fade-right";
+  /** Delay in ms before the transition starts */
+  delay?: number;
+  class?: string;
+}
+
+const { variant = "fade-up", delay, class: className } = Astro.props;
+---
+
+<div
+  data-reveal={variant}
+  data-reveal-delay={delay}
+  class:list={["scroll-reveal", className]}
+>
+  <slot />
+</div>

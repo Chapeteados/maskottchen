@@ -1,12 +1,23 @@
 ---
 import Attribute from "./Attribute.astro";
+import ScrollReveal from "../ScrollReveal.astro";
+
+const items = [
+  { image: "/nutricion.webp", title: "Nutrición Balanceada" },
+  { image: "/palatabilidad.webp", title: "Alta palatabilidad" },
+  { image: "/calidad.webp", title: "Calidad a precio justo" },
+  { image: "/mexico.webp", title: "Hecho en México" },
+];
 ---
 
 <div
   class="bg-[#FFEB00] w-full py-8 flex flex-wrap justify-center items-center md:items-start gap-16"
 >
-  <Attribute image="/nutricion.webp" title="Nutrición Balanceada" />
-  <Attribute image="/palatabilidad.webp" title="Alta palatabilidad" />
-  <Attribute image="/calidad.webp" title="Calidad a precio justo" />
-  <Attribute image="/mexico.webp" title="Hecho en México" />
+  {
+    items.map((item, i) => (
+      <ScrollReveal variant="fade-up" delay={i * 80}>
+        <Attribute image={item.image} title={item.title} />
+      </ScrollReveal>
+    ))
+  }
 </div>

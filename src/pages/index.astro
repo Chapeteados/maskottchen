@@ -4,6 +4,7 @@ import Products from "../components/home/Products.tsx";
 import Attributes from "../components/home/Attributes.astro";
 import Why from "../components/home/Why.astro";
 import Accordion from "../components/home/Accordion.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
 import Layout from "../layouts/Layout.astro";
 ---
 
@@ -12,6 +13,10 @@ import Layout from "../layouts/Layout.astro";
   <Attributes />
   <Why />
 
-  <Products client:only="react" />
-  <Accordion />
+  <ScrollReveal variant="fade-up">
+    <Products client:only="react" />
+  </ScrollReveal>
+  <ScrollReveal variant="fade-up" delay={80}>
+    <Accordion />
+  </ScrollReveal>
 </Layout>
