@@ -7,39 +7,89 @@ import ScrollReveal from "../ScrollReveal.astro";
   <ScrollReveal variant="fade-left" class="w-full md:max-w-1/2">
     <img src="/why.webp" alt="Why" class="w-full h-full object-cover max-w-full" />
   </ScrollReveal>
-  <ScrollReveal variant="fade-right" delay={100} class="relative flex flex-col items-center justify-center gap-8">
-    <img
-      src="/paw.webp"
-      alt=""
-      class="hidden lg:block absolute -top-16 -left-6 w-20 h-20 object-contain"
-      aria-hidden="true"
-    />
-    <img
-      src="/paw.webp"
-      alt=""
-      class="hidden lg:block absolute top-1/2 -translate-y-1/2 -right-12 w-20 h-20 object-contain"
-      aria-hidden="true"
-    />
-    <img
-      src="/paw.webp"
-      alt=""
-      class="hidden lg:block absolute -bottom-12 left-8 w-20 h-20 object-contain"
-      aria-hidden="true"
-    />
-    <img
-      src="/paw.webp"
-      alt=""
-      class="hidden lg:block absolute -bottom-2 -right-4 w-20 h-20 object-contain"
-      aria-hidden="true"
-    />
 
-    <h2 class="text-5xl md:text-6xl font-bold uppercase leading-[30px] md:leading-[45px] z-50">
+  <div class="relative flex w-full flex-col items-center justify-center gap-8 md:max-w-1/2">
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <img
+        src="/paw.webp"
+        alt=""
+        class="hidden lg:block absolute -top-16 -left-6 w-20 h-20 object-contain"
+      />
+      <img
+        src="/paw.webp"
+        alt=""
+        class="hidden lg:block absolute top-1/2 -translate-y-1/2 -right-12 w-20 h-20 object-contain"
+      />
+      <img
+        src="/paw.webp"
+        alt=""
+        class="hidden lg:block absolute -bottom-12 left-8 w-20 h-20 object-contain"
+      />
+      <img
+        src="/paw.webp"
+        alt=""
+        class="hidden lg:block absolute -bottom-2 -right-4 w-20 h-20 object-contain"
+      />
+    </div>
+
+    <h2
+      class="why-scroll-reveal relative z-10 w-full text-center text-5xl font-bold uppercase leading-[30px] md:text-6xl md:leading-[45px]"
+    >
       Ellos lo dan todo por ti.<br />
       <span class="text-4xl md:text-5xl block">&nbsp;&nbsp; Dales lo mejor.</span>
     </h2>
-    <p class="text-base md:text-lg text-center font-bold z-50">
+
+    <p
+      class="why-scroll-reveal why-scroll-reveal--delay relative z-10 w-full text-center text-base font-bold md:text-lg"
+    >
       En Maskottchen cuidamos la calidad <br />y su nutrición como parte de la familia.
     </p>
-    <Button label="Conoce más" href="/nosotros" />
-  </ScrollReveal>
+
+    <div class="why-scroll-reveal why-scroll-reveal--delay-lg relative z-10">
+      <Button label="Conoce más" href="/nosotros" />
+    </div>
+  </div>
 </div>
+
+<style>
+  @keyframes why-scroll-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(1.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .why-scroll-reveal {
+    animation: why-scroll-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 35%;
+  }
+
+  .why-scroll-reveal--delay {
+    animation-range: entry 5% cover 40%;
+  }
+
+  .why-scroll-reveal--delay-lg {
+    animation-range: entry 10% cover 45%;
+  }
+
+  @supports not (animation-timeline: view()) {
+    .why-scroll-reveal {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .why-scroll-reveal {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

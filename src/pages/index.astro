@@ -13,9 +13,7 @@ import Layout from "../layouts/Layout.astro";
   <Attributes />
   <Why />
 
-  <ScrollReveal variant="fade-up">
-    <Products client:only="react" />
-  </ScrollReveal>
+  <Products client:only="react" />
   <ScrollReveal variant="fade-up" delay={80}>
     <Accordion />
   </ScrollReveal>

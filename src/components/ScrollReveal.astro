@@ -12,6 +12,7 @@ const { variant = "fade-up", delay, class: className } = Astro.props;
 <div
   data-reveal={variant}
   data-reveal-delay={delay}
+  style={delay !== undefined ? `--reveal-delay: ${delay}ms` : undefined}
   class:list={["scroll-reveal", className]}
 >
   <slot />
