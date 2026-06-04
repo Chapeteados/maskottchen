@@ -1,6 +1,7 @@
 ---
 import NavLinks from "./NavLinks.astro";
 import SocialLinks from "./SocialLinks.astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 ---
 
 <div
@@ -50,3 +51,5 @@ import SocialLinks from "./SocialLinks.astro";
   render();
   button?.addEventListener("click", toggle);
 </script>
+
+<SpeedInsights />
