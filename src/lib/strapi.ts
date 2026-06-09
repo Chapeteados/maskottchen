@@ -73,7 +73,7 @@ const HOME_PRODUCTS_QUERY =
 const PRODUCTS_LIST_QUERY =
   "populate[0]=presentations&populate[1]=gallery&populate[2]=info" +
   "&pagination[pageSize]=100" +
-  "&sort[0]=name:asc";
+  "&sort[0]=id:asc";
 
 const PARTNERS_QUERY = "pagination[pageSize]=100&sort[0]=name:asc";
 
