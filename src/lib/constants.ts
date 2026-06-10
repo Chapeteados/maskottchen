@@ -1,6 +1,6 @@
 /** URL base de Strapi (sin barra final). */
-export const STRAPI_BASE_URL_DEV = "https://maskottchen-b-production.up.railway.app";
-export const STRAPI_BASE_URL_PROD = "https://maskottchen-b-production.up.railway.app";
+export const STRAPI_BASE_URL_DEV = "https://admin.maskottchenpet.com";
+export const STRAPI_BASE_URL_PROD = "https://admin.maskottchenpet.com";
 
 /** Enlaces a redes (https absolutas). Dejar `""` para ocultar o usar `#` desde el componente. */
 export const FACEBOOK_URL = "https://www.facebook.com/Maskottchen.petfood";
